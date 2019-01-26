@@ -3,5 +3,8 @@ syntax = "proto3";
 package kevin;
 
 service Core {
-
+  rpc GetStatus(Empty) returns (Status) {}
 }
+
+message Status {}
+message Empty  {}
