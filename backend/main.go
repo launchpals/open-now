@@ -6,12 +6,22 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/joho/godotenv"
+	"github.com/launchpals/open-now/backend/env"
 	"github.com/launchpals/open-now/backend/maps"
 	"github.com/launchpals/open-now/backend/service"
 	"go.uber.org/zap"
 )
 
 func main() {
+	// load env vars
+	if err := godotenv.Load(); err != nil {
+		println("error loading .env file:", err.Error())
+		os.Exit(1)
+	}
+	var vals = env.Load()
+
+	// init logger
 	bareLogger, err := zap.NewDevelopment()
 	if err != nil {
 		println(err.Error())
@@ -29,7 +39,7 @@ func main() {
 	}()
 
 	// connect to maps API
-	m, err := maps.NewClient(l.Named("maps"), os.Getenv("GCP_KEY"))
+	m, err := maps.NewClient(l.Named("maps"), vals.GCPKey)
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
