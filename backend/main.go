@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/lunchpals/open-now/backend/service"
+	"github.com/launchpals/open-now/backend/service"
 	"go.uber.org/zap"
 )
 

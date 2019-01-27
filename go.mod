@@ -1,4 +1,4 @@
-module github.com/lunchpals/open-now
+module github.com/launchpals/open-now
 
 require (
 	github.com/gogo/protobuf v1.2.0 // indirect

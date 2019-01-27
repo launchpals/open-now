@@ -14,7 +14,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	open_now "github.com/lunchpals/open-now/proto/go"
+	open_now "github.com/launchpals/open-now/proto/go"
 )
 
 // Server is implements the open_now gRPC server
