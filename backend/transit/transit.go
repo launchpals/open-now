@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// StopsResp is a response from a stops query to the transit.land
 type StopsResp struct {
 	Stops []struct {
 		Geometry struct {
@@ -57,33 +58,26 @@ func (c *Client) TransitStops(ctx context.Context, coords *open_now.Coordinates)
 		coords.GetLongitude(),
 		1000,
 	)
-
-	c.l.Infof("Making transit API call: %s", urlString)
+	c.l.Debugw("Making transit API call", "target", urlString)
 
 	resp, err := http.Get(urlString)
-
 	if err != nil {
 		return nil, err
 	}
-
 	defer resp.Body.Close()
 
-	target := StopsResp{}
-	err = json.NewDecoder(resp.Body).Decode(&target)
-
-	if err != nil {
-		c.l.Infow("sHJXT", "error", err)
+	var target = StopsResp{}
+	if err = json.NewDecoder(resp.Body).Decode(&target); err != nil {
+		c.l.Errorw("failed to read transit response", "error", err)
+		return nil, err
 	}
 
 	var stops = []*open_now.TransitStop{}
-
 	for _, stop := range target.Stops {
 		var routes = []string{}
-
 		for _, route := range stop.RoutesServingStop {
 			routes = append(routes, route.RouteName)
 		}
-
 		stops = append(stops, &open_now.TransitStop{
 			Coordinates: &open_now.Coordinates{
 				Latitude:  stop.GeometryCentroid.Coordinates[0],
