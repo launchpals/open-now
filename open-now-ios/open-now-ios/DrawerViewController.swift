@@ -19,7 +19,7 @@ class DrawerViewController: UIViewController, PulleyDrawerViewControllerDelegate
 
         // Do any additional setup after loading the view.
         setupViews()
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(selectedStop(sender:)), name: NSNotification.Name(rawValue: "done"), object: nil)
     }
     
     func setupViews() {
@@ -156,6 +156,10 @@ class DrawerViewController: UIViewController, PulleyDrawerViewControllerDelegate
     
     func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
         return bottomSafeArea + 120
+    }
+    
+    @objc func selectedStop(sender: Notification) {
+        
     }
     
 

@@ -93,7 +93,7 @@ extension ViewControllerLocationManager: CLLocationManagerDelegate, MKMapViewDel
     
     func plotPOI(_ poi: OpenNow_Interest, _ source: CLLocationCoordinate2D?) {
         let coordinate = CLLocationCoordinate2D(latitude: poi.coordinates.latitude, longitude: poi.coordinates.longitude)
-        plotRouteAt(target: coordinate, source: nil)
+        plotRouteAt(target: coordinate, source: source)
         let poiAnnotation = MKPointAnnotation()
         poiAnnotation.title = poi.name
         poiAnnotation.coordinate = coordinate
@@ -256,8 +256,9 @@ extension ViewControllerFetch {
                 return
             }
             for poi in pois {
-                self.plotPOI(poi, nil)
+                self.plotPOI(poi, coordinate)
             }
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "done"), object: pois.count)
         }
         
         if latestPoiCenters.count == 0 { return }
