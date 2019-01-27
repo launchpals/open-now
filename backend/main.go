@@ -20,7 +20,13 @@ func main() {
 	var vals = env.Load()
 
 	// init logger
-	bareLogger, err := zap.NewDevelopment()
+	var bareLogger *zap.Logger
+	var err error
+	if vals.Prod {
+		bareLogger, err = zap.NewProduction()
+	} else {
+		bareLogger, err = zap.NewDevelopment()
+	}
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
