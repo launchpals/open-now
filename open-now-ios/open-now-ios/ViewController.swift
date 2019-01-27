@@ -54,16 +54,16 @@ extension ViewControllerLocationManager: CLLocationManagerDelegate, MKMapViewDel
             return
         }
         
+        self.latestLocation = latestLocation
         if (!didSetup) {
 //            let mapRegion = MKCoordinateRegion(center: latestLocation.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2));
 //            mapView.setRegion(mapRegion, animated: false)
 //            let mapCamera = MKMapCamera(lookingAtCenter: latestLocation.coordinate, fromDistance: 100, pitch: 0, heading: 0)
 //            mapView.setCamera(mapCamera, animated: false)
             mapView.setUserTrackingMode(.followWithHeading, animated: false)
-            
+            fetchPOI()
             didSetup = true
         }
-        self.latestLocation = latestLocation
 //        updateMapTranslation()
     }
     /*
@@ -125,7 +125,22 @@ extension ViewControllerGestures: UIGestureRecognizerDelegate {
 typealias ViewControllerFetch = ViewController
 extension ViewControllerFetch {
     func fetchPOI() {
-//        client.getStatus(OpenNow_Position.)
+        guard let latestLocation = latestLocation else { return }
+        let coordinates = OpenNow_Coordinates.with {
+            $0.latitude = latestLocation.coordinate.latitude
+            $0.longitude = latestLocation.coordinate.longitude
+        }
+        let position = OpenNow_Position.with {
+            $0.coordinates = coordinates
+        }
+        _ = try? client.getPointsOfInterest(position) { (pois, result) in
+            guard let pois = pois?.interests else {
+                return
+            }
+            for poi in pois {
+                self.plotRouteAt(coordinate: CLLocationCoordinate2D(latitude: poi.coordinates.latitude, longitude: poi.coordinates.longitude))
+            }
+        }
     }
 }
 
