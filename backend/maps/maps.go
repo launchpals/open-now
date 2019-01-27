@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	"go.uber.org/zap"
 	"googlemaps.github.io/maps"
@@ -17,8 +16,6 @@ import (
 type Client struct {
 	l  *zap.SugaredLogger
 	gm *gmaps.Client
-
-	cache *cache
 }
 
 // NewClient instantiates a maps client
@@ -37,9 +34,8 @@ func NewClient(l *zap.SugaredLogger, key string) (*Client, error) {
 	}
 	l.Info("successfully made query to gmaps")
 	return &Client{
-		l:     l,
-		gm:    gm,
-		cache: newCache(5*time.Minute, 5*time.Minute),
+		l:  l,
+		gm: gm,
 	}, nil
 }
 
@@ -85,10 +81,10 @@ func (c *Client) PointsOfInterest(
 			case gmaps.PlaceTypeGroceryOrSupermarket, gmaps.PlaceTypeCafe, gmaps.PlaceTypeBakery, gmaps.PlaceTypeBar, gmaps.PlaceTypeNightClub, gmaps.PlaceTypeFood:
 				ot = open_now.Interest_FOOD
 				break
-			case gmaps.PlaceTypeShoppingMall, gmaps.PlaceTypeStore:
+			case gmaps.PlaceTypeShoppingMall, gmaps.PlaceTypeStore, gmaps.PlaceTypeEstablishment:
 				ot = open_now.Interest_STORE
 				break
-			case gmaps.PlaceTypeLodging, gmaps.PlaceTypeCampground, gmaps.PlaceTypeEstablishment:
+			case gmaps.PlaceTypeLodging, gmaps.PlaceTypeCampground:
 				ot = open_now.Interest_LODGING
 				break
 			case gmaps.PlaceTypeAmusementPark, gmaps.PlaceTypeAquarium, gmaps.PlaceTypeArtGallery, gmaps.PlaceTypeLibrary:
@@ -97,10 +93,13 @@ func (c *Client) PointsOfInterest(
 			}
 		}
 		pois = append(pois, &open_now.Interest{
-			InterestId:  l.ID,
-			Name:        l.Name,
-			Type:        ot,
-			Description: fmt.Sprintf("%s - %s", strings.Join(l.Types, ", "), l.FormattedAddress),
+			InterestId: l.ID,
+			Name:       l.Name,
+			Type:       ot,
+			Photos:     newPhotos(l.Photos),
+
+			LocationDescription: newLocationDescription(&l),
+			InterestDescription: strings.Join(l.Types, ", "),
 			Coordinates: &open_now.Coordinates{
 				Latitude:  l.Geometry.Location.Lat,
 				Longitude: l.Geometry.Location.Lng,
@@ -110,5 +109,23 @@ func (c *Client) PointsOfInterest(
 	return pois, nil
 }
 
-// Close stops background jobs
-func (c *Client) Close() { c.cache.stop <- true }
+func newPhotos(gphotos []gmaps.Photo) []*open_now.Interest_Photo {
+	var photos = make([]*open_now.Interest_Photo, len(gphotos))
+	for i := 0; i < len(gphotos); i++ {
+		photos[i] = &open_now.Interest_Photo{
+			PhotoRef:     gphotos[i].PhotoReference,
+			Attributions: gphotos[i].HTMLAttributions,
+		}
+	}
+	return photos
+}
+
+func newLocationDescription(l *gmaps.PlacesSearchResult) string {
+	if l.FormattedAddress == "" {
+		return l.Vicinity
+	}
+	if l.Vicinity == "" {
+		return l.FormattedAddress
+	}
+	return fmt.Sprintf("%s (near %s)", l.FormattedAddress, l.Vicinity)
+}

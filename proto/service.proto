@@ -6,7 +6,6 @@ service Core {
   rpc GetStatus(Empty) returns (Status) {}
 
   rpc GetPointsOfInterest(Position) returns (PointsOfInterest) {}
-  rpc GetDirections(DirectionsReq)  returns (DirectionsResp) {}
 
   rpc GetTransitStops(Position) returns (TransitStops) {}
 }
@@ -40,8 +39,15 @@ message PointsOfInterest {
 message Interest {
   string interest_id              = 1;
   string name                     = 2;
-  string description              = 3;
-  string photo_ref                = 4;
+  string location_description     = 3;
+  string interest_description     = 4;
+
+  message Photo {
+    string photo_ref             = 1;
+    repeated string attributions = 2;
+  }
+  repeated Photo photos = 5;
+
   enum Type {
     UNKNOWN    = 0;
     AUTHORITY  = 1;
@@ -50,17 +56,9 @@ message Interest {
     LODGING    = 4;
     ATTRACTION = 5;
   }
-  Type type                       = 6;
-  Coordinates coordinates         = 7;
-}
+  Type type = 6;
 
-message DirectionsReq {
-  string client_id   = 1;
-  string interest_id = 2;
-}
-message DirectionsResp {
-  string interest_id  = 1;
-  repeated bytes legs = 2;
+  Coordinates coordinates = 7;
 }
 
 message TransitStops {

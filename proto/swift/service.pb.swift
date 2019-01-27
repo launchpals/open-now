@@ -176,14 +176,19 @@ struct OpenNow_Interest {
     set {_uniqueStorage()._name = newValue}
   }
 
-  var description_p: String {
-    get {return _storage._description_p}
-    set {_uniqueStorage()._description_p = newValue}
+  var locationDescription: String {
+    get {return _storage._locationDescription}
+    set {_uniqueStorage()._locationDescription = newValue}
   }
 
-  var photoRef: String {
-    get {return _storage._photoRef}
-    set {_uniqueStorage()._photoRef = newValue}
+  var interestDescription: String {
+    get {return _storage._interestDescription}
+    set {_uniqueStorage()._interestDescription = newValue}
+  }
+
+  var photos: [OpenNow_Interest.Photo] {
+    get {return _storage._photos}
+    set {_uniqueStorage()._photos = newValue}
   }
 
   var type: OpenNow_Interest.TypeEnum {
@@ -242,6 +247,20 @@ struct OpenNow_Interest {
 
   }
 
+  struct Photo {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var photoRef: String = String()
+
+    var attributions: [String] = []
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
   init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
@@ -262,34 +281,6 @@ extension OpenNow_Interest.TypeEnum: CaseIterable {
 }
 
 #endif  // swift(>=4.2)
-
-struct OpenNow_DirectionsReq {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var clientID: String = String()
-
-  var interestID: String = String()
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct OpenNow_DirectionsResp {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var interestID: String = String()
-
-  var legs: [Data] = []
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
 
 struct OpenNow_TransitStops {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -562,8 +553,9 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "interest_id"),
     2: .same(proto: "name"),
-    3: .same(proto: "description"),
-    4: .standard(proto: "photo_ref"),
+    3: .standard(proto: "location_description"),
+    4: .standard(proto: "interest_description"),
+    5: .same(proto: "photos"),
     6: .same(proto: "type"),
     7: .same(proto: "coordinates"),
   ]
@@ -571,8 +563,9 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
   fileprivate class _StorageClass {
     var _interestID: String = String()
     var _name: String = String()
-    var _description_p: String = String()
-    var _photoRef: String = String()
+    var _locationDescription: String = String()
+    var _interestDescription: String = String()
+    var _photos: [OpenNow_Interest.Photo] = []
     var _type: OpenNow_Interest.TypeEnum = .unknown
     var _coordinates: OpenNow_Coordinates? = nil
 
@@ -583,8 +576,9 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     init(copying source: _StorageClass) {
       _interestID = source._interestID
       _name = source._name
-      _description_p = source._description_p
-      _photoRef = source._photoRef
+      _locationDescription = source._locationDescription
+      _interestDescription = source._interestDescription
+      _photos = source._photos
       _type = source._type
       _coordinates = source._coordinates
     }
@@ -604,8 +598,9 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
         switch fieldNumber {
         case 1: try decoder.decodeSingularStringField(value: &_storage._interestID)
         case 2: try decoder.decodeSingularStringField(value: &_storage._name)
-        case 3: try decoder.decodeSingularStringField(value: &_storage._description_p)
-        case 4: try decoder.decodeSingularStringField(value: &_storage._photoRef)
+        case 3: try decoder.decodeSingularStringField(value: &_storage._locationDescription)
+        case 4: try decoder.decodeSingularStringField(value: &_storage._interestDescription)
+        case 5: try decoder.decodeRepeatedMessageField(value: &_storage._photos)
         case 6: try decoder.decodeSingularEnumField(value: &_storage._type)
         case 7: try decoder.decodeSingularMessageField(value: &_storage._coordinates)
         default: break
@@ -622,11 +617,14 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       if !_storage._name.isEmpty {
         try visitor.visitSingularStringField(value: _storage._name, fieldNumber: 2)
       }
-      if !_storage._description_p.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._description_p, fieldNumber: 3)
+      if !_storage._locationDescription.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._locationDescription, fieldNumber: 3)
       }
-      if !_storage._photoRef.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._photoRef, fieldNumber: 4)
+      if !_storage._interestDescription.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._interestDescription, fieldNumber: 4)
+      }
+      if !_storage._photos.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._photos, fieldNumber: 5)
       }
       if _storage._type != .unknown {
         try visitor.visitSingularEnumField(value: _storage._type, fieldNumber: 6)
@@ -645,8 +643,9 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
         let rhs_storage = _args.1
         if _storage._interestID != rhs_storage._interestID {return false}
         if _storage._name != rhs_storage._name {return false}
-        if _storage._description_p != rhs_storage._description_p {return false}
-        if _storage._photoRef != rhs_storage._photoRef {return false}
+        if _storage._locationDescription != rhs_storage._locationDescription {return false}
+        if _storage._interestDescription != rhs_storage._interestDescription {return false}
+        if _storage._photos != rhs_storage._photos {return false}
         if _storage._type != rhs_storage._type {return false}
         if _storage._coordinates != rhs_storage._coordinates {return false}
         return true
@@ -669,71 +668,36 @@ extension OpenNow_Interest.TypeEnum: SwiftProtobuf._ProtoNameProviding {
   ]
 }
 
-extension OpenNow_DirectionsReq: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = _protobuf_package + ".DirectionsReq"
+extension OpenNow_Interest.Photo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = OpenNow_Interest.protoMessageName + ".Photo"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "client_id"),
-    2: .standard(proto: "interest_id"),
+    1: .standard(proto: "photo_ref"),
+    2: .same(proto: "attributions"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.clientID)
-      case 2: try decoder.decodeSingularStringField(value: &self.interestID)
+      case 1: try decoder.decodeSingularStringField(value: &self.photoRef)
+      case 2: try decoder.decodeRepeatedStringField(value: &self.attributions)
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.clientID.isEmpty {
-      try visitor.visitSingularStringField(value: self.clientID, fieldNumber: 1)
+    if !self.photoRef.isEmpty {
+      try visitor.visitSingularStringField(value: self.photoRef, fieldNumber: 1)
     }
-    if !self.interestID.isEmpty {
-      try visitor.visitSingularStringField(value: self.interestID, fieldNumber: 2)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: OpenNow_DirectionsReq, rhs: OpenNow_DirectionsReq) -> Bool {
-    if lhs.clientID != rhs.clientID {return false}
-    if lhs.interestID != rhs.interestID {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension OpenNow_DirectionsResp: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = _protobuf_package + ".DirectionsResp"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "interest_id"),
-    2: .same(proto: "legs"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.interestID)
-      case 2: try decoder.decodeRepeatedBytesField(value: &self.legs)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.interestID.isEmpty {
-      try visitor.visitSingularStringField(value: self.interestID, fieldNumber: 1)
-    }
-    if !self.legs.isEmpty {
-      try visitor.visitRepeatedBytesField(value: self.legs, fieldNumber: 2)
+    if !self.attributions.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.attributions, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: OpenNow_DirectionsResp, rhs: OpenNow_DirectionsResp) -> Bool {
-    if lhs.interestID != rhs.interestID {return false}
-    if lhs.legs != rhs.legs {return false}
+  static func ==(lhs: OpenNow_Interest.Photo, rhs: OpenNow_Interest.Photo) -> Bool {
+    if lhs.photoRef != rhs.photoRef {return false}
+    if lhs.attributions != rhs.attributions {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
