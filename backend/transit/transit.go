@@ -56,7 +56,7 @@ func (c *Client) TransitStops(ctx context.Context, coords *open_now.Coordinates)
 		"https://transit.land/api/v1/stops?lat=%f&lon=%f&r=%d",
 		coords.GetLatitude(),
 		coords.GetLongitude(),
-		1000,
+		5000,
 	)
 	c.l.Debugw("Making transit API call", "target", urlString)
 
