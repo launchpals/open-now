@@ -40,8 +40,15 @@ message PointsOfInterest {
 message Interest {
   string interest_id              = 1;
   string name                     = 2;
-  string description              = 3;
-  string photo_ref                = 4;
+  string location_description     = 3;
+  string interest_description     = 4;
+
+  message Photo {
+    string photo_ref             = 1;
+    repeated string attributions = 2;
+  }
+  repeated Photo photos = 5;
+
   enum Type {
     UNKNOWN    = 0;
     AUTHORITY  = 1;
@@ -50,8 +57,9 @@ message Interest {
     LODGING    = 4;
     ATTRACTION = 5;
   }
-  Type type                       = 6;
-  Coordinates coordinates         = 7;
+  Type type = 6;
+
+  Coordinates coordinates = 7;
 }
 
 message DirectionsReq {
