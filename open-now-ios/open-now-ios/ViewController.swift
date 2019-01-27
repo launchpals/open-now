@@ -22,6 +22,8 @@ class ViewController: UIViewController {
     lazy var client = OpenNow_CoreServiceClient.init(address: address, secure: false, arguments: [])
     @IBOutlet weak var mapView: MKMapView!
     var allStops = [String: [CLLocationCoordinate2D]]()
+    var hasRouteAlready = false
+    var enableInput = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -158,6 +160,7 @@ extension ViewControllerLocationManager: CLLocationManagerDelegate, MKMapViewDel
                 let coordinate = CLLocationCoordinate2D(latitude: s.coordinates.latitude, longitude: s.coordinates.longitude)
                 let stopAnnotation = MKPointAnnotation()
                 stopAnnotation.title = s.routes.joined(separator: ", ")
+                stopAnnotation.subtitle = "bus routes"
                 stopAnnotation.coordinate = coordinate
                 mapView.addAnnotation(stopAnnotation)
                 allStops[route]!.append(coordinate)
@@ -178,9 +181,13 @@ extension ViewControllerLocationManager: CLLocationManagerDelegate, MKMapViewDel
             annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
             
             annotationView!.canShowCallout = true
-            // TODO: HERE!
         } else {
             annotationView!.annotation = annotation
+        }
+        if annotationView?.annotation?.subtitle == "bus routes" {
+            (annotationView as? MKMarkerAnnotationView)?.markerTintColor = #colorLiteral(red: 0, green: 0.4, blue: 1, alpha: 1)
+        } else {
+            (annotationView as? MKMarkerAnnotationView)?.markerTintColor = nil
         }
         
         return annotationView
@@ -216,7 +223,16 @@ extension ViewControllerLocationManager: CLLocationManagerDelegate, MKMapViewDel
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        fetchPOI(coordinate: view.annotation!.coordinate)
+        if (enableInput && view.annotation?.subtitle == "bus routes" && !hasRouteAlready) {
+            hasRouteAlready = true
+            for annotation in mapView.annotations {
+                if annotation.subtitle == "bus routes" && annotation.coordinate.latitude != view.annotation?.coordinate.latitude {
+                    mapView.removeAnnotation(annotation)
+                }
+            }
+            fetchPOI(coordinate: view.annotation!.coordinate)
+        }
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "done"), object: nil)
     }
 }
 
@@ -258,7 +274,6 @@ extension ViewControllerFetch {
             for poi in pois {
                 self.plotPOI(poi, coordinate)
             }
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "done"), object: pois.count)
         }
         
         if latestPoiCenters.count == 0 { return }
@@ -306,6 +321,7 @@ extension ViewControllerNotificationCenter {
     }
     
     @objc func busSelected(bus: NSNotification) {
+        enableInput = true
         let busString = bus.object as! String
         print(busString + "selected!")
         mapView.removeOverlays(mapView.overlays)
