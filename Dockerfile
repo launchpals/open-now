@@ -16,4 +16,5 @@ RUN go install ./backend
 FROM alpine AS open_now
 RUN apk add ca-certificates
 COPY --from=build /go/bin/backend /bin/open_now_server
+EXPOSE 8081
 ENTRYPOINT ["/bin/open_now_server"]
