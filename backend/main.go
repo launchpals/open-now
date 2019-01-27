@@ -45,7 +45,7 @@ func main() {
 	}()
 
 	// connect to maps API
-	m, err := maps.NewClient(l.Named("maps"), vals.GCPKey)
+	m, err := maps.NewClient(l.Named("maps"), vals.GCPKey, vals.OWMKey)
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)

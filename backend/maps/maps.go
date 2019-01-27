@@ -2,7 +2,9 @@ package maps
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"go.uber.org/zap"
@@ -14,13 +16,14 @@ import (
 
 // Client interacts with map services
 type Client struct {
-	l  *zap.SugaredLogger
-	gm *gmaps.Client
+	l    *zap.SugaredLogger
+	gm   *gmaps.Client
+	wkey string
 }
 
 // NewClient instantiates a maps client
-func NewClient(l *zap.SugaredLogger, key string) (*Client, error) {
-	gm, err := gmaps.NewClient(gmaps.WithAPIKey(key))
+func NewClient(l *zap.SugaredLogger, gkey string, wkey string) (*Client, error) {
+	gm, err := gmaps.NewClient(gmaps.WithAPIKey(gkey))
 	if err != nil {
 		return nil, err
 	}
@@ -34,8 +37,9 @@ func NewClient(l *zap.SugaredLogger, key string) (*Client, error) {
 	}
 	l.Info("successfully made query to gmaps")
 	return &Client{
-		l:  l,
-		gm: gm,
+		l:    l,
+		gm:   gm,
+		wkey: wkey,
 	}, nil
 }
 
@@ -45,7 +49,7 @@ func (c *Client) PointsOfInterest(
 	coords *open_now.Coordinates,
 	situation open_now.Context_Situation,
 ) ([]*open_now.Interest, error) {
-	var radius uint
+	var radius float64
 	switch situation {
 	case open_now.Context_FOOT:
 		radius = 1000
@@ -54,12 +58,43 @@ func (c *Client) PointsOfInterest(
 	default:
 		radius = 5000
 	}
+
+	// TODO: weather call
+	urlString := fmt.Sprintf(
+		"http://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=%s",
+		coords.GetLatitude(),
+		coords.GetLongitude(),
+		c.wkey,
+	)
+	c.l.Debugw("Making weather API call", "target", urlString)
+
+	wResp, err := http.Get(urlString)
+	if err != nil {
+		return nil, err
+	}
+	defer wResp.Body.Close()
+
+	var raw interface{}
+	if err = json.NewDecoder(wResp.Body).Decode(&raw); err != nil {
+		c.l.Errorw("failed to read weather response", "error", err)
+		return nil, err
+	}
+
+	rawJSON := raw.(map[string]interface{})
+
+	if rawJSON["rain"] != nil {
+		radius *= 0.75
+		c.l.Infof("IT IS RAINING")
+	} else {
+		c.l.Infof("IT IS NOT RAINING")
+	}
+
 	resp, err := c.gm.NearbySearch(ctx, &gmaps.NearbySearchRequest{
 		Location: &gmaps.LatLng{
 			Lat: coords.GetLatitude(),
 			Lng: coords.GetLongitude(),
 		},
-		Radius:  radius,
+		Radius:  uint(radius),
 		OpenNow: true, // gg
 	})
 	if err != nil {
