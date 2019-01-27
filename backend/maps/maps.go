@@ -3,7 +3,7 @@ package maps
 import (
 	"context"
 	"fmt"
-	"strconv"
+	"strings"
 	"time"
 
 	"go.uber.org/zap"
@@ -70,27 +70,37 @@ func (c *Client) PointsOfInterest(
 		c.l.Errorw("failed to make query", "error", err)
 		return nil, err
 	}
-	c.l.Debugw("received response", "resp", resp)
 
 	var pois = []*open_now.Interest{}
 	for _, l := range resp.Results {
-		if len(l.OpeningHours.Periods) < 1 {
-			continue
-		}
-		openTime, err := strconv.ParseInt(l.OpeningHours.Periods[0].Open.Time, 10, 64)
-		if err != nil {
-			continue
-		}
-		closeTime, err := strconv.ParseInt(l.OpeningHours.Periods[0].Close.Time, 10, 64)
-		if err != nil {
-			continue
+		c.l.Debugw("received response",
+			"hours", l.OpeningHours)
+
+		var ot open_now.Interest_Type
+		for _, t := range l.Types {
+			switch gmaps.PlaceType(t) {
+			case gmaps.PlaceTypeEmbassy, gmaps.PlaceTypeCityHall, gmaps.PlaceTypePolice, gmaps.PlaceTypeLocalGovernmentOffice, gmaps.PlaceTypeHospital:
+				ot = open_now.Interest_AUTHORITY
+				break
+			case gmaps.PlaceTypeGroceryOrSupermarket, gmaps.PlaceTypeCafe, gmaps.PlaceTypeBakery, gmaps.PlaceTypeBar, gmaps.PlaceTypeNightClub, gmaps.PlaceTypeFood:
+				ot = open_now.Interest_FOOD
+				break
+			case gmaps.PlaceTypeShoppingMall, gmaps.PlaceTypeStore:
+				ot = open_now.Interest_SHOPPING
+				break
+			case gmaps.PlaceTypeLodging, gmaps.PlaceTypeCampground, gmaps.PlaceTypeEstablishment:
+				ot = open_now.Interest_LODGING
+				break
+			case gmaps.PlaceTypeAmusementPark, gmaps.PlaceTypeAquarium, gmaps.PlaceTypeArtGallery, gmaps.PlaceTypeLibrary:
+				ot = open_now.Interest_ATTRACTION
+				break
+			}
 		}
 		pois = append(pois, &open_now.Interest{
 			InterestId:  l.ID,
 			Name:        l.Name,
-			Description: l.FormattedAddress,
-			OpeningTime: openTime,
-			ClosingTime: closeTime,
+			Type:        ot,
+			Description: fmt.Sprintf("%s - %s", strings.Join(l.Types, ", "), l.FormattedAddress),
 			Coordinates: &open_now.Coordinates{
 				Latitude:  l.Geometry.Location.Lat,
 				Longitude: l.Geometry.Location.Lng,

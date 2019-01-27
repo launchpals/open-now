@@ -15,7 +15,7 @@ func Load() *Values {
 		host = "127.0.0.1"
 	}
 	return &Values{
-		Host:   os.Getenv("OPEN_NOW_HOST"),
+		Host:   host,
 		GCPKey: os.Getenv("GCP_KEY"),
 	}
 }

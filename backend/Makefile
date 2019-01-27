@@ -12,3 +12,7 @@ deps:
 .PHONY: run
 run:
 	go run main.go
+
+.PHONY: proto
+proto:
+	(cd ../ ; make proto)

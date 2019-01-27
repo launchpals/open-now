@@ -39,18 +39,17 @@ message Interest {
   string interest_id              = 1;
   string name                     = 2;
   string description              = 3;
-  int64 opening_time              = 4;
-  int64 closing_time              = 5;
+  string photo_ref                = 4;
   enum Type {
-    UNKNOWN   = 0;
-    AUTHORITY = 1;
-    FOOD      = 2;
+    UNKNOWN    = 0;
+    AUTHORITY  = 1;
+    FOOD       = 2;
+    SHOPPING   = 3;
+    LODGING    = 4;
+    ATTRACTION = 5;
   }
   Type type                       = 6;
   Coordinates coordinates         = 7;
-
-  int32 minutes_to_dest           = 8;
-  repeated Coordinates directions = 9;
 }
 
 message DirectionsReq {

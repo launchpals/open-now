@@ -181,14 +181,9 @@ struct OpenNow_Interest {
     set {_uniqueStorage()._description_p = newValue}
   }
 
-  var openingTime: Int64 {
-    get {return _storage._openingTime}
-    set {_uniqueStorage()._openingTime = newValue}
-  }
-
-  var closingTime: Int64 {
-    get {return _storage._closingTime}
-    set {_uniqueStorage()._closingTime = newValue}
+  var photoRef: String {
+    get {return _storage._photoRef}
+    set {_uniqueStorage()._photoRef = newValue}
   }
 
   var type: OpenNow_Interest.TypeEnum {
@@ -205,16 +200,6 @@ struct OpenNow_Interest {
   /// Clears the value of `coordinates`. Subsequent reads from it will return its default value.
   mutating func clearCoordinates() {_uniqueStorage()._coordinates = nil}
 
-  var minutesToDest: Int32 {
-    get {return _storage._minutesToDest}
-    set {_uniqueStorage()._minutesToDest = newValue}
-  }
-
-  var directions: [OpenNow_Coordinates] {
-    get {return _storage._directions}
-    set {_uniqueStorage()._directions = newValue}
-  }
-
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum TypeEnum: SwiftProtobuf.Enum {
@@ -222,6 +207,9 @@ struct OpenNow_Interest {
     case unknown // = 0
     case authority // = 1
     case food // = 2
+    case shopping // = 3
+    case lodging // = 4
+    case attraction // = 5
     case UNRECOGNIZED(Int)
 
     init() {
@@ -233,6 +221,9 @@ struct OpenNow_Interest {
       case 0: self = .unknown
       case 1: self = .authority
       case 2: self = .food
+      case 3: self = .shopping
+      case 4: self = .lodging
+      case 5: self = .attraction
       default: self = .UNRECOGNIZED(rawValue)
       }
     }
@@ -242,6 +233,9 @@ struct OpenNow_Interest {
       case .unknown: return 0
       case .authority: return 1
       case .food: return 2
+      case .shopping: return 3
+      case .lodging: return 4
+      case .attraction: return 5
       case .UNRECOGNIZED(let i): return i
       }
     }
@@ -261,6 +255,9 @@ extension OpenNow_Interest.TypeEnum: CaseIterable {
     .unknown,
     .authority,
     .food,
+    .shopping,
+    .lodging,
+    .attraction,
   ]
 }
 
@@ -528,24 +525,18 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     1: .standard(proto: "interest_id"),
     2: .same(proto: "name"),
     3: .same(proto: "description"),
-    4: .standard(proto: "opening_time"),
-    5: .standard(proto: "closing_time"),
+    4: .standard(proto: "photo_ref"),
     6: .same(proto: "type"),
     7: .same(proto: "coordinates"),
-    8: .standard(proto: "minutes_to_dest"),
-    9: .same(proto: "directions"),
   ]
 
   fileprivate class _StorageClass {
     var _interestID: String = String()
     var _name: String = String()
     var _description_p: String = String()
-    var _openingTime: Int64 = 0
-    var _closingTime: Int64 = 0
+    var _photoRef: String = String()
     var _type: OpenNow_Interest.TypeEnum = .unknown
     var _coordinates: OpenNow_Coordinates? = nil
-    var _minutesToDest: Int32 = 0
-    var _directions: [OpenNow_Coordinates] = []
 
     static let defaultInstance = _StorageClass()
 
@@ -555,12 +546,9 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       _interestID = source._interestID
       _name = source._name
       _description_p = source._description_p
-      _openingTime = source._openingTime
-      _closingTime = source._closingTime
+      _photoRef = source._photoRef
       _type = source._type
       _coordinates = source._coordinates
-      _minutesToDest = source._minutesToDest
-      _directions = source._directions
     }
   }
 
@@ -579,12 +567,9 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
         case 1: try decoder.decodeSingularStringField(value: &_storage._interestID)
         case 2: try decoder.decodeSingularStringField(value: &_storage._name)
         case 3: try decoder.decodeSingularStringField(value: &_storage._description_p)
-        case 4: try decoder.decodeSingularInt64Field(value: &_storage._openingTime)
-        case 5: try decoder.decodeSingularInt64Field(value: &_storage._closingTime)
+        case 4: try decoder.decodeSingularStringField(value: &_storage._photoRef)
         case 6: try decoder.decodeSingularEnumField(value: &_storage._type)
         case 7: try decoder.decodeSingularMessageField(value: &_storage._coordinates)
-        case 8: try decoder.decodeSingularInt32Field(value: &_storage._minutesToDest)
-        case 9: try decoder.decodeRepeatedMessageField(value: &_storage._directions)
         default: break
         }
       }
@@ -602,23 +587,14 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       if !_storage._description_p.isEmpty {
         try visitor.visitSingularStringField(value: _storage._description_p, fieldNumber: 3)
       }
-      if _storage._openingTime != 0 {
-        try visitor.visitSingularInt64Field(value: _storage._openingTime, fieldNumber: 4)
-      }
-      if _storage._closingTime != 0 {
-        try visitor.visitSingularInt64Field(value: _storage._closingTime, fieldNumber: 5)
+      if !_storage._photoRef.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._photoRef, fieldNumber: 4)
       }
       if _storage._type != .unknown {
         try visitor.visitSingularEnumField(value: _storage._type, fieldNumber: 6)
       }
       if let v = _storage._coordinates {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-      }
-      if _storage._minutesToDest != 0 {
-        try visitor.visitSingularInt32Field(value: _storage._minutesToDest, fieldNumber: 8)
-      }
-      if !_storage._directions.isEmpty {
-        try visitor.visitRepeatedMessageField(value: _storage._directions, fieldNumber: 9)
       }
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -632,12 +608,9 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
         if _storage._interestID != rhs_storage._interestID {return false}
         if _storage._name != rhs_storage._name {return false}
         if _storage._description_p != rhs_storage._description_p {return false}
-        if _storage._openingTime != rhs_storage._openingTime {return false}
-        if _storage._closingTime != rhs_storage._closingTime {return false}
+        if _storage._photoRef != rhs_storage._photoRef {return false}
         if _storage._type != rhs_storage._type {return false}
         if _storage._coordinates != rhs_storage._coordinates {return false}
-        if _storage._minutesToDest != rhs_storage._minutesToDest {return false}
-        if _storage._directions != rhs_storage._directions {return false}
         return true
       }
       if !storagesAreEqual {return false}
@@ -652,6 +625,9 @@ extension OpenNow_Interest.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     0: .same(proto: "UNKNOWN"),
     1: .same(proto: "AUTHORITY"),
     2: .same(proto: "FOOD"),
+    3: .same(proto: "SHOPPING"),
+    4: .same(proto: "LODGING"),
+    5: .same(proto: "ATTRACTION"),
   ]
 }
 
