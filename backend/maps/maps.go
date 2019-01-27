@@ -52,11 +52,11 @@ func (c *Client) PointsOfInterest(
 	var radius float64
 	switch situation {
 	case open_now.Context_FOOT:
-		radius = 1000
+		radius = 500
 	case open_now.Context_VEHICLE:
-		radius = 10000
+		radius = 2000
 	default:
-		radius = 5000
+		radius = 500
 	}
 
 	// TODO: weather call
