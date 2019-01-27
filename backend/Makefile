@@ -7,7 +7,7 @@ check:
 
 .PHONY: deps
 deps:
-	( cd ../ ; env GO11GO111MODULE=on go mod vendor)
+	( cd ../ ; env GO111MODULE=on go mod vendor)
 
 .PHONY: run
 run:
