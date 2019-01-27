@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/launchpals/open-now/backend/maps"
 	"github.com/launchpals/open-now/backend/service"
 	"go.uber.org/zap"
 )
@@ -27,8 +28,15 @@ func main() {
 		cancel()
 	}()
 
+	// connect to maps API
+	m, err := maps.NewClient(l.Named("maps"), os.Getenv("GCP_KEY"))
+	if err != nil {
+		println(err.Error())
+		os.Exit(1)
+	}
+
 	// spin up service
-	s, err := service.New(l)
+	s, err := service.New(l.Named("service"), m)
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)

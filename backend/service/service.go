@@ -14,6 +14,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
+	"github.com/launchpals/open-now/backend/maps"
 	open_now "github.com/launchpals/open-now/proto/go"
 )
 
@@ -24,7 +25,7 @@ type Server struct {
 }
 
 // New instantiates a new server
-func New(l *zap.SugaredLogger) (*Server, error) {
+func New(l *zap.SugaredLogger, m *maps.Client) (*Server, error) {
 	return &Server{l: l}, nil
 }
 
