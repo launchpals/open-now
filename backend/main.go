@@ -23,7 +23,9 @@ func main() {
 	var bareLogger *zap.Logger
 	var err error
 	if vals.Prod {
-		bareLogger, err = zap.NewProduction()
+		var cfg = zap.NewProductionConfig()
+		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+		bareLogger, err = cfg.Build()
 	} else {
 		bareLogger, err = zap.NewDevelopment()
 	}
