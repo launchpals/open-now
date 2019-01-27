@@ -20,7 +20,8 @@ message Coordinates {
 message Position {
   string client_id        = 1;
   Context situation       = 2;
-  Coordinates coordinates = 3;
+  float direction         = 3;
+  Coordinates coordinates = 4;
 }
 message Context {
   enum Situation {

@@ -72,6 +72,11 @@ struct OpenNow_Position {
   /// Clears the value of `situation`. Subsequent reads from it will return its default value.
   mutating func clearSituation() {_uniqueStorage()._situation = nil}
 
+  var direction: Float {
+    get {return _storage._direction}
+    set {_uniqueStorage()._direction = newValue}
+  }
+
   var coordinates: OpenNow_Coordinates {
     get {return _storage._coordinates ?? OpenNow_Coordinates()}
     set {_uniqueStorage()._coordinates = newValue}
@@ -371,12 +376,14 @@ extension OpenNow_Position: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "client_id"),
     2: .same(proto: "situation"),
-    3: .same(proto: "coordinates"),
+    3: .same(proto: "direction"),
+    4: .same(proto: "coordinates"),
   ]
 
   fileprivate class _StorageClass {
     var _clientID: String = String()
     var _situation: OpenNow_Context? = nil
+    var _direction: Float = 0
     var _coordinates: OpenNow_Coordinates? = nil
 
     static let defaultInstance = _StorageClass()
@@ -386,6 +393,7 @@ extension OpenNow_Position: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     init(copying source: _StorageClass) {
       _clientID = source._clientID
       _situation = source._situation
+      _direction = source._direction
       _coordinates = source._coordinates
     }
   }
@@ -404,7 +412,8 @@ extension OpenNow_Position: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
         switch fieldNumber {
         case 1: try decoder.decodeSingularStringField(value: &_storage._clientID)
         case 2: try decoder.decodeSingularMessageField(value: &_storage._situation)
-        case 3: try decoder.decodeSingularMessageField(value: &_storage._coordinates)
+        case 3: try decoder.decodeSingularFloatField(value: &_storage._direction)
+        case 4: try decoder.decodeSingularMessageField(value: &_storage._coordinates)
         default: break
         }
       }
@@ -419,8 +428,11 @@ extension OpenNow_Position: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       if let v = _storage._situation {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
       }
+      if _storage._direction != 0 {
+        try visitor.visitSingularFloatField(value: _storage._direction, fieldNumber: 3)
+      }
       if let v = _storage._coordinates {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
       }
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -433,6 +445,7 @@ extension OpenNow_Position: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
         let rhs_storage = _args.1
         if _storage._clientID != rhs_storage._clientID {return false}
         if _storage._situation != rhs_storage._situation {return false}
+        if _storage._direction != rhs_storage._direction {return false}
         if _storage._coordinates != rhs_storage._coordinates {return false}
         return true
       }

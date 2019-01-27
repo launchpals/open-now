@@ -40,5 +40,9 @@ func NewClient(l *zap.SugaredLogger, key string) (*Client, error) {
 	}, nil
 }
 
+func (c *Client) PointsOfInterest(ctx context.Context) {
+	c.gm.TextSearch(ctx, &gmaps.TextSearchRequest{})
+}
+
 // Close stops background jobs
 func (c *Client) Close() { c.cache.stop <- true }
