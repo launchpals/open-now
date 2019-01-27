@@ -1,5 +1,7 @@
 # Open Now
 
+> Find contextually-aware safe havens on your way home - any time, any day.
+
 ![nwHacks 2019](https://img.shields.io/badge/nwhacks-2019-06C1C0.svg) [![Deployed with Inertia](https://img.shields.io/badge/deploying%20with-inertia-blue.svg)](https://github.com/ubclaunchpad/inertia)
 
 There are many cases where innocent people commuting home are attacked shortly after getting off the bus. Last week, one of our members felt threatened that they were going to be followed home after highly uncomfortable interactions with a stranger on the bus. In this state of panic, Google Maps was found to be lacking in design for users who are in fight or flight mode, when all they want to do is to find the closest safe place to get off the bus.
