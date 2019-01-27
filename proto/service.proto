@@ -7,6 +7,8 @@ service Core {
 
   rpc GetPointsOfInterest(Position) returns (PointsOfInterest) {}
   rpc GetDirections(DirectionsReq)  returns (DirectionsResp) {}
+
+  rpc GetTransitStops(Position) returns (TransitStops) {}
 }
 
 message Status {}
@@ -59,4 +61,13 @@ message DirectionsReq {
 message DirectionsResp {
   string interest_id  = 1;
   repeated bytes legs = 2;
+}
+
+message TransitStops {
+  repeated TransitStop stops = 1;
+}
+
+message TransitStop {
+  Coordinates coordinates = 1;
+  repeated string routes = 2;
 }

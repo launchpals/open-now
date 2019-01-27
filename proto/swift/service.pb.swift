@@ -291,6 +291,44 @@ struct OpenNow_DirectionsResp {
   init() {}
 }
 
+struct OpenNow_TransitStops {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var stops: [OpenNow_TransitStop] = []
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct OpenNow_TransitStop {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var coordinates: OpenNow_Coordinates {
+    get {return _storage._coordinates ?? OpenNow_Coordinates()}
+    set {_uniqueStorage()._coordinates = newValue}
+  }
+  /// Returns true if `coordinates` has been explicitly set.
+  var hasCoordinates: Bool {return _storage._coordinates != nil}
+  /// Clears the value of `coordinates`. Subsequent reads from it will return its default value.
+  mutating func clearCoordinates() {_uniqueStorage()._coordinates = nil}
+
+  var routes: [String] {
+    get {return _storage._routes}
+    set {_uniqueStorage()._routes = newValue}
+  }
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+
+  fileprivate var _storage = _StorageClass.defaultInstance
+}
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "open_now"
@@ -696,6 +734,104 @@ extension OpenNow_DirectionsResp: SwiftProtobuf.Message, SwiftProtobuf._MessageI
   static func ==(lhs: OpenNow_DirectionsResp, rhs: OpenNow_DirectionsResp) -> Bool {
     if lhs.interestID != rhs.interestID {return false}
     if lhs.legs != rhs.legs {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension OpenNow_TransitStops: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".TransitStops"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "stops"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeRepeatedMessageField(value: &self.stops)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.stops.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.stops, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: OpenNow_TransitStops, rhs: OpenNow_TransitStops) -> Bool {
+    if lhs.stops != rhs.stops {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension OpenNow_TransitStop: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".TransitStop"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "coordinates"),
+    2: .same(proto: "routes"),
+  ]
+
+  fileprivate class _StorageClass {
+    var _coordinates: OpenNow_Coordinates? = nil
+    var _routes: [String] = []
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _coordinates = source._coordinates
+      _routes = source._routes
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        switch fieldNumber {
+        case 1: try decoder.decodeSingularMessageField(value: &_storage._coordinates)
+        case 2: try decoder.decodeRepeatedStringField(value: &_storage._routes)
+        default: break
+        }
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      if let v = _storage._coordinates {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+      }
+      if !_storage._routes.isEmpty {
+        try visitor.visitRepeatedStringField(value: _storage._routes, fieldNumber: 2)
+      }
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: OpenNow_TransitStop, rhs: OpenNow_TransitStop) -> Bool {
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._coordinates != rhs_storage._coordinates {return false}
+        if _storage._routes != rhs_storage._routes {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
