@@ -10,6 +10,7 @@ import (
 	"github.com/launchpals/open-now/backend/env"
 	"github.com/launchpals/open-now/backend/maps"
 	"github.com/launchpals/open-now/backend/service"
+	"github.com/launchpals/open-now/backend/transit"
 	"go.uber.org/zap"
 )
 
@@ -42,8 +43,15 @@ func main() {
 		os.Exit(1)
 	}
 
+	// connect to transit API
+	t, err := transit.NewClient(l.Named("transit"))
+	if err != nil {
+		println(err.Error())
+		os.Exit(1)
+	}
+
 	// spin up service
-	s, err := service.New(l.Named("service"), m)
+	s, err := service.New(l.Named("service"), m, t)
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
