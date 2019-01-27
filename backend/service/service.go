@@ -22,11 +22,16 @@ import (
 type Server struct {
 	l    *zap.SugaredLogger
 	core open_now.CoreServer
+
+	m *maps.Client
 }
 
 // New instantiates a new server
 func New(l *zap.SugaredLogger, m *maps.Client) (*Server, error) {
-	return &Server{l: l}, nil
+	return &Server{
+		l: l,
+		m: m,
+	}, nil
 }
 
 // Run spins up the open_now service
