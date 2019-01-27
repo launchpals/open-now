@@ -14,6 +14,7 @@ RUN go install ./backend
 
 # Copy into minimal final image
 FROM alpine AS open_now
+ENV OPEN_NOW_HOST=0.0.0.0
 RUN apk add ca-certificates
 COPY --from=build /go/bin/backend /bin/open_now_server
 EXPOSE 8081

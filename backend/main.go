@@ -48,7 +48,7 @@ func main() {
 		println(err.Error())
 		os.Exit(1)
 	}
-	if err := s.Run(ctx, "127.0.0.1", "8081"); err != nil {
+	if err := s.Run(ctx, vals.Host, "8081"); err != nil {
 		l.Fatalw("server stopped",
 			"error", err)
 	}
