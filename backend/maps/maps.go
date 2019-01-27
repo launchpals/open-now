@@ -3,6 +3,7 @@ package maps
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"go.uber.org/zap"
 	"googlemaps.github.io/maps"
@@ -13,6 +14,8 @@ import (
 type Client struct {
 	l  *zap.SugaredLogger
 	gm *gmaps.Client
+
+	cache *cache
 }
 
 // NewClient instantiates a maps client
@@ -31,7 +34,11 @@ func NewClient(l *zap.SugaredLogger, key string) (*Client, error) {
 	}
 	l.Info("successfully made query to gmaps")
 	return &Client{
-		l:  l,
-		gm: gm,
+		l:     l,
+		gm:    gm,
+		cache: newCache(5*time.Minute, 5*time.Minute),
 	}, nil
 }
+
+// Close stops background jobs
+func (c *Client) Close() { c.cache.stop <- true }
