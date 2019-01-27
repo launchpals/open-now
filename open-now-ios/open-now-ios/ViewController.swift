@@ -21,6 +21,7 @@ class ViewController: UIViewController {
     weak var timer: Timer?
     lazy var client = OpenNow_CoreServiceClient.init(address: address, secure: false, arguments: [])
     @IBOutlet weak var mapView: MKMapView!
+    var allStops = [String: [CLLocationCoordinate2D]]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -137,10 +138,12 @@ extension ViewControllerLocationManager: CLLocationManagerDelegate, MKMapViewDel
             }
         }
         let sortedRoutes = minDistanceToRoute.sorted { $0.1 < $1.1 }
-
+        
         // Go through and render the first 3 stops for each route
         for (route, stops) in routes {
-            
+            if (allStops[route] == nil) {
+                allStops[route] = [CLLocationCoordinate2D]()
+            }
             let sortedStops = stops.sorted { distanceTo($0, latestLocation!.coordinate) < distanceTo($1, latestLocation!.coordinate) }
             
             var i = 0
@@ -157,6 +160,7 @@ extension ViewControllerLocationManager: CLLocationManagerDelegate, MKMapViewDel
                 stopAnnotation.title = s.routes.joined(separator: ", ")
                 stopAnnotation.coordinate = coordinate
                 mapView.addAnnotation(stopAnnotation)
+                allStops[route]!.append(coordinate)
                 
                 i += 1
             }
@@ -210,6 +214,10 @@ extension ViewControllerLocationManager: CLLocationManagerDelegate, MKMapViewDel
         renderer.lineWidth = 4.0
         return renderer
     }
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        fetchPOI(coordinate: view.annotation!.coordinate)
+    }
 }
 
 typealias ViewControllerGestures = ViewController
@@ -232,9 +240,13 @@ typealias ViewControllerFetch = ViewController
 extension ViewControllerFetch {
     func fetchPOI() {
         guard let latestLocation = latestLocation else { return }
+        fetchPOI(coordinate: latestLocation.coordinate)
+    }
+    
+    func fetchPOI(coordinate: CLLocationCoordinate2D) {
         let coordinates = OpenNow_Coordinates.with {
-            $0.latitude = latestLocation.coordinate.latitude
-            $0.longitude = latestLocation.coordinate.longitude
+            $0.latitude = coordinate.latitude
+            $0.longitude = coordinate.longitude
         }
         let position = OpenNow_Position.with {
             $0.coordinates = coordinates
@@ -267,6 +279,7 @@ extension ViewControllerFetch {
             }
         }
     }
+    
     func fetchTransit() {
         guard let latestLocation = latestLocation else { return }
         let coordinates = OpenNow_Coordinates.with {
@@ -292,6 +305,13 @@ extension ViewControllerNotificationCenter {
     }
     
     @objc func busSelected(bus: NSNotification) {
-        print(bus.object as! String)
+        let busString = bus.object as! String
+        print(busString + "selected!")
+        mapView.removeOverlays(mapView.overlays)
+        for annotation in mapView.annotations {
+            if let title = annotation.title, let actualTitle = title, !actualTitle.components(separatedBy: ", ").contains("0" + busString) {
+                mapView.removeAnnotation(annotation)
+            }
+        }
     }
 }
