@@ -15,10 +15,7 @@ import (
 
 func main() {
 	// load env vars
-	if err := godotenv.Load(); err != nil {
-		println("error loading .env file:", err.Error())
-		os.Exit(1)
-	}
+	godotenv.Load()
 	var vals = env.Load()
 
 	// init logger
