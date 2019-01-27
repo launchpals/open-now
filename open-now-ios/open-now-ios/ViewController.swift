@@ -15,6 +15,7 @@ class ViewController: UIViewController {
     var didSetup = false
     var latestLocation: CLLocation?
     var latestHeading: CLHeading?
+    lazy var client = OpenNow_CoreServiceClient.init(address: "34.73.17.110:8081")
     @IBOutlet weak var mapView: MKMapView!
     
     override func viewDidLoad() {
@@ -22,7 +23,8 @@ class ViewController: UIViewController {
         
         setupMapView()
         setupLocationUpdates()
-        setupGestureRecognizer()
+//        setupGestureRecognizer()
+        
     }
 }
 
@@ -118,5 +120,12 @@ extension ViewControllerGestures: UIGestureRecognizerDelegate {
         plotRouteAt(coordinate: locationCoordinate)
     }
     
+}
+
+typealias ViewControllerFetch = ViewController
+extension ViewControllerFetch {
+    func fetchPOI() {
+//        client.getStatus(OpenNow_Position.)
+    }
 }
 
