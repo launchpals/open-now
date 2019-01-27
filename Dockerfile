@@ -14,5 +14,6 @@ RUN go install ./backend
 
 # Copy into minimal final image
 FROM alpine AS open_now
+RUN apk add ca-certificates
 COPY --from=build /go/bin/backend /bin/open_now_server
 ENTRYPOINT ["/bin/open_now_server"]
