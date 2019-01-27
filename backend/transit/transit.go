@@ -80,8 +80,8 @@ func (c *Client) TransitStops(ctx context.Context, coords *open_now.Coordinates)
 		}
 		stops = append(stops, &open_now.TransitStop{
 			Coordinates: &open_now.Coordinates{
-				Latitude:  stop.GeometryCentroid.Coordinates[0],
-				Longitude: stop.GeometryCentroid.Coordinates[1],
+				Latitude:  stop.GeometryCentroid.Coordinates[1],
+				Longitude: stop.GeometryCentroid.Coordinates[0],
 			},
 			Routes: routes,
 		})
