@@ -53,7 +53,7 @@ func NewClient(l *zap.SugaredLogger) (*Client, error) {
 // TransitStops returns a list of transit stops
 func (c *Client) TransitStops(ctx context.Context, coords *open_now.Coordinates) ([]*open_now.TransitStop, error) {
 	urlString := fmt.Sprintf(
-		"https://transit.land/api/v1/stops?lat=%f&lon=%f&r=%d",
+		"https://transit.land/api/v1/stops?lat=%f&lon=%f&r=%d&per_page=500",
 		coords.GetLatitude(),
 		coords.GetLongitude(),
 		5000,
