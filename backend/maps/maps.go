@@ -3,6 +3,7 @@ package maps
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"go.uber.org/zap"
@@ -47,7 +48,7 @@ func (c *Client) PointsOfInterest(
 	ctx context.Context,
 	coords *open_now.Coordinates,
 	situation open_now.Context_Situation,
-) error {
+) ([]open_now.Interest, error) {
 	var radius uint
 	switch situation {
 	case open_now.Context_FOOT:
@@ -68,12 +69,37 @@ func (c *Client) PointsOfInterest(
 	})
 	if err != nil {
 		c.l.Error("failed to make query", "error", err)
-		return err
+		return nil, err
 	}
+
+	pois := []open_now.Interest{}
+
 	for _, l := range resp.Results {
+		openTime, err := strconv.ParseInt(l.OpeningHours.Periods[0].Open.Time, 10, 64)
+
+		if err != nil {
+			// TODO
+		}
+
+		closeTime, err := strconv.ParseInt(l.OpeningHours.Periods[0].Close.Time, 10, 64)
+
+		poi := open_now.Interest{
+			InterestId:  l.ID,
+			Name:        l.Name,
+			Description: "",
+			OpeningTime: openTime,
+			ClosingTime: closeTime,
+			Coordinates: &open_now.Coordinates{
+				Latitude:  l.Geometry.Location.Lat,
+				Longitude: l.Geometry.Location.Lng,
+			},
+		}
+
+		pois = append(pois, poi)
+
 		c.l.Debugw("location", "l", l)
 	}
-	return nil
+	return pois, nil
 }
 
 // Close stops background jobs
