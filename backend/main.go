@@ -20,7 +20,15 @@ func main() {
 	var vals = env.Load()
 
 	// init logger
-	bareLogger, err := zap.NewDevelopment()
+	var bareLogger *zap.Logger
+	var err error
+	if vals.Prod {
+		var cfg = zap.NewProductionConfig()
+		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+		bareLogger, err = cfg.Build()
+	} else {
+		bareLogger, err = zap.NewDevelopment()
+	}
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
@@ -37,7 +45,7 @@ func main() {
 	}()
 
 	// connect to maps API
-	m, err := maps.NewClient(l.Named("maps"), vals.GCPKey)
+	m, err := maps.NewClient(l.Named("maps"), vals.GCPKey, vals.OWMKey)
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
