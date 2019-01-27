@@ -10,6 +10,7 @@ import (
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -90,7 +91,7 @@ func (s *Server) GetStatus(context.Context, *open_now.Empty) (*open_now.Status, 
 func (s *Server) GetPointsOfInterest(ctx context.Context, pos *open_now.Position) (*open_now.PointsOfInterest, error) {
 	pois, err := s.m.PointsOfInterest(ctx, pos.GetCoordinates(), pos.GetSituation().GetSituation())
 	if err != nil {
-		// TODO: error handling
+		return nil, grpc.Errorf(codes.Internal, err.Error())
 	}
 
 	return &open_now.PointsOfInterest{
