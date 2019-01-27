@@ -44,7 +44,7 @@ message Interest {
     UNKNOWN    = 0;
     AUTHORITY  = 1;
     FOOD       = 2;
-    SHOPPING   = 3;
+    STORE      = 3;
     LODGING    = 4;
     ATTRACTION = 5;
   }

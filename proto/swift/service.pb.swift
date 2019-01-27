@@ -207,7 +207,7 @@ struct OpenNow_Interest {
     case unknown // = 0
     case authority // = 1
     case food // = 2
-    case shopping // = 3
+    case store // = 3
     case lodging // = 4
     case attraction // = 5
     case UNRECOGNIZED(Int)
@@ -221,7 +221,7 @@ struct OpenNow_Interest {
       case 0: self = .unknown
       case 1: self = .authority
       case 2: self = .food
-      case 3: self = .shopping
+      case 3: self = .store
       case 4: self = .lodging
       case 5: self = .attraction
       default: self = .UNRECOGNIZED(rawValue)
@@ -233,7 +233,7 @@ struct OpenNow_Interest {
       case .unknown: return 0
       case .authority: return 1
       case .food: return 2
-      case .shopping: return 3
+      case .store: return 3
       case .lodging: return 4
       case .attraction: return 5
       case .UNRECOGNIZED(let i): return i
@@ -255,7 +255,7 @@ extension OpenNow_Interest.TypeEnum: CaseIterable {
     .unknown,
     .authority,
     .food,
-    .shopping,
+    .store,
     .lodging,
     .attraction,
   ]
@@ -625,7 +625,7 @@ extension OpenNow_Interest.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     0: .same(proto: "UNKNOWN"),
     1: .same(proto: "AUTHORITY"),
     2: .same(proto: "FOOD"),
-    3: .same(proto: "SHOPPING"),
+    3: .same(proto: "STORE"),
     4: .same(proto: "LODGING"),
     5: .same(proto: "ATTRACTION"),
   ]

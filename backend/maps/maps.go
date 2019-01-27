@@ -86,7 +86,7 @@ func (c *Client) PointsOfInterest(
 				ot = open_now.Interest_FOOD
 				break
 			case gmaps.PlaceTypeShoppingMall, gmaps.PlaceTypeStore:
-				ot = open_now.Interest_SHOPPING
+				ot = open_now.Interest_STORE
 				break
 			case gmaps.PlaceTypeLodging, gmaps.PlaceTypeCampground, gmaps.PlaceTypeEstablishment:
 				ot = open_now.Interest_LODGING
