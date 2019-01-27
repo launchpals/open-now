@@ -87,8 +87,11 @@ func (s *Server) GetStatus(context.Context, *open_now.Empty) (*open_now.Status, 
 }
 
 // GetPointsOfInterest blah blah
-func (s *Server) GetPointsOfInterest(context.Context, *open_now.Position) (*open_now.PointsOfInterest, error) {
-	return nil, nil
+func (s *Server) GetPointsOfInterest(ctx context.Context, pos *open_now.Position) (*open_now.PointsOfInterest, error) {
+	s.m.PointsOfInterest(ctx, pos.GetCoordinates(), pos.GetSituation().GetSituation())
+	return &open_now.PointsOfInterest{
+		Interests: []*open_now.Interest{},
+	}, nil
 }
 
 // GetDirections blah blah

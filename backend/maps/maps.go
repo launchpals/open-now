@@ -8,6 +8,8 @@ import (
 	"go.uber.org/zap"
 	"googlemaps.github.io/maps"
 	gmaps "googlemaps.github.io/maps"
+
+	open_now "github.com/launchpals/open-now/proto/go"
 )
 
 // Client interacts with map services
@@ -40,8 +42,38 @@ func NewClient(l *zap.SugaredLogger, key string) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) PointsOfInterest(ctx context.Context) {
-	c.gm.TextSearch(ctx, &gmaps.TextSearchRequest{})
+// PointsOfInterest returns a series of points
+func (c *Client) PointsOfInterest(
+	ctx context.Context,
+	coords *open_now.Coordinates,
+	situation open_now.Context_Situation,
+) error {
+	var radius uint
+	switch situation {
+	case open_now.Context_FOOT:
+		radius = 1000
+	case open_now.Context_VEHICLE:
+		radius = 10000
+	default:
+		radius = 5000
+	}
+
+	resp, err := c.gm.TextSearch(ctx, &gmaps.TextSearchRequest{
+		Location: &gmaps.LatLng{
+			Lat: coords.GetLatitude(),
+			Lng: coords.GetLongitude(),
+		},
+		Radius:  radius,
+		OpenNow: true, // gg
+	})
+	if err != nil {
+		c.l.Error("failed to make query", "error", err)
+		return err
+	}
+	for _, l := range resp.Results {
+		c.l.Debugw("location", "l", l)
+	}
+	return nil
 }
 
 // Close stops background jobs
