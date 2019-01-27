@@ -1,7 +1,7 @@
 
 .PHONY: setup
 setup:
-	bash .scripts/protoc-gen-go.sh
+	bash .scripts/protoc-go.sh
 
 .PHONY: proto
 proto:

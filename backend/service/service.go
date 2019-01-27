@@ -1,26 +1,38 @@
 package service
 
 import (
+	"context"
+	"fmt"
+	"net"
+	"time"
+
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	"google.golang.org/grpc"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 
 	open_now "github.com/lunchpals/open-now/proto/go"
 )
 
+// Server is implements the open_now gRPC server
 type Server struct {
-	l *zap.SugaredLogger
+	l    *zap.SugaredLogger
 	core open_now.CoreServer
 }
 
-func NewServer(l *zap.SugaredLogger) (*Server, error) {
+// New instantiates a new server
+func New(l *zap.SugaredLogger) (*Server, error) {
 	return &Server{l: l}, nil
 }
 
-func (s *Server) Run(host, port string) error {
+// Run spins up the open_now service
+func (s *Server) Run(ctx context.Context, host, port string) error {
 	listener, err := net.Listen("tcp", host+":"+port)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to listen on '%s:%s'", host, port)
 	}
 
 	// set logger to record all incoming requests
@@ -42,14 +54,14 @@ func (s *Server) Run(host, port string) error {
 
 	// initialize server
 	gs := grpc.NewServer(serverOpts...)
-	pb.RegisterCoreServer(gs, s)
+	open_now.RegisterCoreServer(gs, s)
 
 	// interrupt server gracefully if context is cancelled
 	go func() {
 		for {
 			select {
 			case <-ctx.Done():
-				d.l.Info("shutting down server")
+				s.l.Info("shutting down server")
 				gs.GracefulStop()
 				return
 			}
@@ -61,4 +73,19 @@ func (s *Server) Run(host, port string) error {
 		"host", host,
 		"port", port)
 	return gs.Serve(listener)
+}
+
+// GetStatus blah blah
+func (s *Server) GetStatus(context.Context, *open_now.Empty) (*open_now.Status, error) {
+	return &open_now.Status{}, nil
+}
+
+// GetPointsOfInterest blah blah
+func (s *Server) GetPointsOfInterest(context.Context, *open_now.Position) (*open_now.PointsOfInterest, error) {
+	return nil, nil
+}
+
+// GetDirections blah blah
+func (s *Server) GetDirections(context.Context, *open_now.DirectionsReq) (*open_now.DirectionsResp, error) {
+	return nil, nil
 }
