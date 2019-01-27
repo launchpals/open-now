@@ -6,7 +6,8 @@ service Core {
   rpc GetStatus(Empty) returns (Status) {}
 
   rpc GetPointsOfInterest(Position) returns (PointsOfInterest) {}
-  rpc GetDirections(DirectionsReq)  returns (DirectionsResp) {}
+
+  rpc GetTransitStops(Position) returns (TransitStops) {}
 }
 
 message Status {}
@@ -20,7 +21,8 @@ message Coordinates {
 message Position {
   string client_id        = 1;
   Context situation       = 2;
-  Coordinates coordinates = 3;
+  float direction         = 3;
+  Coordinates coordinates = 4;
 }
 message Context {
   enum Situation {
@@ -28,6 +30,7 @@ message Context {
     VEHICLE = 1;
     FOOT    = 2;
   }
+  Situation situation = 1;
 }
 
 message PointsOfInterest {
@@ -36,26 +39,33 @@ message PointsOfInterest {
 message Interest {
   string interest_id              = 1;
   string name                     = 2;
-  string description              = 3;
-  int64 opening_time              = 4;
-  int64 closing_time              = 5;
-  enum Type {
-    UNKNOWN   = 0;
-    AUTHORITY = 1;
-    FOOD      = 2;
+  string location_description     = 3;
+  string interest_description     = 4;
+
+  message Photo {
+    string photo_ref             = 1;
+    repeated string attributions = 2;
   }
-  Type type                       = 6;
-  Coordinates coordinates         = 7;
+  repeated Photo photos = 5;
 
-  int32 minutes_to_dest           = 8;
-  repeated Coordinates directions = 9;
+  enum Type {
+    UNKNOWN    = 0;
+    AUTHORITY  = 1;
+    FOOD       = 2;
+    STORE      = 3;
+    LODGING    = 4;
+    ATTRACTION = 5;
+  }
+  Type type = 6;
+
+  Coordinates coordinates = 7;
 }
 
-message DirectionsReq {
-  string client_id   = 1;
-  string interest_id = 2;
+message TransitStops {
+  repeated TransitStop stops = 1;
 }
-message DirectionsResp {
-  string interest_id  = 1;
-  repeated bytes legs = 2;
+
+message TransitStop {
+  Coordinates coordinates = 1;
+  repeated string routes = 2;
 }

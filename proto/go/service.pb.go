@@ -46,33 +46,42 @@ func (x Context_Situation) String() string {
 	return proto.EnumName(Context_Situation_name, int32(x))
 }
 func (Context_Situation) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_service_d59414a4a69a1b93, []int{4, 0}
+	return fileDescriptor_service_c324304aebe1cb28, []int{4, 0}
 }
 
 type Interest_Type int32
 
 const (
-	Interest_UNKNOWN   Interest_Type = 0
-	Interest_AUTHORITY Interest_Type = 1
-	Interest_FOOD      Interest_Type = 2
+	Interest_UNKNOWN    Interest_Type = 0
+	Interest_AUTHORITY  Interest_Type = 1
+	Interest_FOOD       Interest_Type = 2
+	Interest_STORE      Interest_Type = 3
+	Interest_LODGING    Interest_Type = 4
+	Interest_ATTRACTION Interest_Type = 5
 )
 
 var Interest_Type_name = map[int32]string{
 	0: "UNKNOWN",
 	1: "AUTHORITY",
 	2: "FOOD",
+	3: "STORE",
+	4: "LODGING",
+	5: "ATTRACTION",
 }
 var Interest_Type_value = map[string]int32{
-	"UNKNOWN":   0,
-	"AUTHORITY": 1,
-	"FOOD":      2,
+	"UNKNOWN":    0,
+	"AUTHORITY":  1,
+	"FOOD":       2,
+	"STORE":      3,
+	"LODGING":    4,
+	"ATTRACTION": 5,
 }
 
 func (x Interest_Type) String() string {
 	return proto.EnumName(Interest_Type_name, int32(x))
 }
 func (Interest_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_service_d59414a4a69a1b93, []int{6, 0}
+	return fileDescriptor_service_c324304aebe1cb28, []int{6, 0}
 }
 
 type Status struct {
@@ -85,7 +94,7 @@ func (m *Status) Reset()         { *m = Status{} }
 func (m *Status) String() string { return proto.CompactTextString(m) }
 func (*Status) ProtoMessage()    {}
 func (*Status) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_d59414a4a69a1b93, []int{0}
+	return fileDescriptor_service_c324304aebe1cb28, []int{0}
 }
 func (m *Status) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Status.Unmarshal(m, b)
@@ -115,7 +124,7 @@ func (m *Empty) Reset()         { *m = Empty{} }
 func (m *Empty) String() string { return proto.CompactTextString(m) }
 func (*Empty) ProtoMessage()    {}
 func (*Empty) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_d59414a4a69a1b93, []int{1}
+	return fileDescriptor_service_c324304aebe1cb28, []int{1}
 }
 func (m *Empty) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Empty.Unmarshal(m, b)
@@ -147,7 +156,7 @@ func (m *Coordinates) Reset()         { *m = Coordinates{} }
 func (m *Coordinates) String() string { return proto.CompactTextString(m) }
 func (*Coordinates) ProtoMessage()    {}
 func (*Coordinates) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_d59414a4a69a1b93, []int{2}
+	return fileDescriptor_service_c324304aebe1cb28, []int{2}
 }
 func (m *Coordinates) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Coordinates.Unmarshal(m, b)
@@ -184,7 +193,8 @@ func (m *Coordinates) GetLongitude() float64 {
 type Position struct {
 	ClientId             string       `protobuf:"bytes,1,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
 	Situation            *Context     `protobuf:"bytes,2,opt,name=situation,proto3" json:"situation,omitempty"`
-	Coordinates          *Coordinates `protobuf:"bytes,3,opt,name=coordinates,proto3" json:"coordinates,omitempty"`
+	Direction            float32      `protobuf:"fixed32,3,opt,name=direction,proto3" json:"direction,omitempty"`
+	Coordinates          *Coordinates `protobuf:"bytes,4,opt,name=coordinates,proto3" json:"coordinates,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
 	XXX_unrecognized     []byte       `json:"-"`
 	XXX_sizecache        int32        `json:"-"`
@@ -194,7 +204,7 @@ func (m *Position) Reset()         { *m = Position{} }
 func (m *Position) String() string { return proto.CompactTextString(m) }
 func (*Position) ProtoMessage()    {}
 func (*Position) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_d59414a4a69a1b93, []int{3}
+	return fileDescriptor_service_c324304aebe1cb28, []int{3}
 }
 func (m *Position) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Position.Unmarshal(m, b)
@@ -228,6 +238,13 @@ func (m *Position) GetSituation() *Context {
 	return nil
 }
 
+func (m *Position) GetDirection() float32 {
+	if m != nil {
+		return m.Direction
+	}
+	return 0
+}
+
 func (m *Position) GetCoordinates() *Coordinates {
 	if m != nil {
 		return m.Coordinates
@@ -236,16 +253,17 @@ func (m *Position) GetCoordinates() *Coordinates {
 }
 
 type Context struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Situation            Context_Situation `protobuf:"varint,1,opt,name=situation,proto3,enum=open_now.Context_Situation" json:"situation,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
 }
 
 func (m *Context) Reset()         { *m = Context{} }
 func (m *Context) String() string { return proto.CompactTextString(m) }
 func (*Context) ProtoMessage()    {}
 func (*Context) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_d59414a4a69a1b93, []int{4}
+	return fileDescriptor_service_c324304aebe1cb28, []int{4}
 }
 func (m *Context) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Context.Unmarshal(m, b)
@@ -265,6 +283,13 @@ func (m *Context) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Context proto.InternalMessageInfo
 
+func (m *Context) GetSituation() Context_Situation {
+	if m != nil {
+		return m.Situation
+	}
+	return Context_UNKNOWN
+}
+
 type PointsOfInterest struct {
 	Interests            []*Interest `protobuf:"bytes,1,rep,name=interests,proto3" json:"interests,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
@@ -276,7 +301,7 @@ func (m *PointsOfInterest) Reset()         { *m = PointsOfInterest{} }
 func (m *PointsOfInterest) String() string { return proto.CompactTextString(m) }
 func (*PointsOfInterest) ProtoMessage()    {}
 func (*PointsOfInterest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_d59414a4a69a1b93, []int{5}
+	return fileDescriptor_service_c324304aebe1cb28, []int{5}
 }
 func (m *PointsOfInterest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PointsOfInterest.Unmarshal(m, b)
@@ -304,25 +329,23 @@ func (m *PointsOfInterest) GetInterests() []*Interest {
 }
 
 type Interest struct {
-	InterestId           string         `protobuf:"bytes,1,opt,name=interest_id,json=interestId,proto3" json:"interest_id,omitempty"`
-	Name                 string         `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description          string         `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	OpeningTime          int64          `protobuf:"varint,4,opt,name=opening_time,json=openingTime,proto3" json:"opening_time,omitempty"`
-	ClosingTime          int64          `protobuf:"varint,5,opt,name=closing_time,json=closingTime,proto3" json:"closing_time,omitempty"`
-	Type                 Interest_Type  `protobuf:"varint,6,opt,name=type,proto3,enum=open_now.Interest_Type" json:"type,omitempty"`
-	Coordinates          *Coordinates   `protobuf:"bytes,7,opt,name=coordinates,proto3" json:"coordinates,omitempty"`
-	MinutesToDest        int32          `protobuf:"varint,8,opt,name=minutes_to_dest,json=minutesToDest,proto3" json:"minutes_to_dest,omitempty"`
-	Directions           []*Coordinates `protobuf:"bytes,9,rep,name=directions,proto3" json:"directions,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
+	InterestId           string            `protobuf:"bytes,1,opt,name=interest_id,json=interestId,proto3" json:"interest_id,omitempty"`
+	Name                 string            `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	LocationDescription  string            `protobuf:"bytes,3,opt,name=location_description,json=locationDescription,proto3" json:"location_description,omitempty"`
+	InterestDescription  string            `protobuf:"bytes,4,opt,name=interest_description,json=interestDescription,proto3" json:"interest_description,omitempty"`
+	Photos               []*Interest_Photo `protobuf:"bytes,5,rep,name=photos,proto3" json:"photos,omitempty"`
+	Type                 Interest_Type     `protobuf:"varint,6,opt,name=type,proto3,enum=open_now.Interest_Type" json:"type,omitempty"`
+	Coordinates          *Coordinates      `protobuf:"bytes,7,opt,name=coordinates,proto3" json:"coordinates,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
 }
 
 func (m *Interest) Reset()         { *m = Interest{} }
 func (m *Interest) String() string { return proto.CompactTextString(m) }
 func (*Interest) ProtoMessage()    {}
 func (*Interest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_d59414a4a69a1b93, []int{6}
+	return fileDescriptor_service_c324304aebe1cb28, []int{6}
 }
 func (m *Interest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Interest.Unmarshal(m, b)
@@ -356,25 +379,25 @@ func (m *Interest) GetName() string {
 	return ""
 }
 
-func (m *Interest) GetDescription() string {
+func (m *Interest) GetLocationDescription() string {
 	if m != nil {
-		return m.Description
+		return m.LocationDescription
 	}
 	return ""
 }
 
-func (m *Interest) GetOpeningTime() int64 {
+func (m *Interest) GetInterestDescription() string {
 	if m != nil {
-		return m.OpeningTime
+		return m.InterestDescription
 	}
-	return 0
+	return ""
 }
 
-func (m *Interest) GetClosingTime() int64 {
+func (m *Interest) GetPhotos() []*Interest_Photo {
 	if m != nil {
-		return m.ClosingTime
+		return m.Photos
 	}
-	return 0
+	return nil
 }
 
 func (m *Interest) GetType() Interest_Type {
@@ -391,108 +414,132 @@ func (m *Interest) GetCoordinates() *Coordinates {
 	return nil
 }
 
-func (m *Interest) GetMinutesToDest() int32 {
-	if m != nil {
-		return m.MinutesToDest
-	}
-	return 0
+type Interest_Photo struct {
+	PhotoRef             string   `protobuf:"bytes,1,opt,name=photo_ref,json=photoRef,proto3" json:"photo_ref,omitempty"`
+	Attributions         []string `protobuf:"bytes,2,rep,name=attributions,proto3" json:"attributions,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Interest) GetDirections() []*Coordinates {
+func (m *Interest_Photo) Reset()         { *m = Interest_Photo{} }
+func (m *Interest_Photo) String() string { return proto.CompactTextString(m) }
+func (*Interest_Photo) ProtoMessage()    {}
+func (*Interest_Photo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_c324304aebe1cb28, []int{6, 0}
+}
+func (m *Interest_Photo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Interest_Photo.Unmarshal(m, b)
+}
+func (m *Interest_Photo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Interest_Photo.Marshal(b, m, deterministic)
+}
+func (dst *Interest_Photo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Interest_Photo.Merge(dst, src)
+}
+func (m *Interest_Photo) XXX_Size() int {
+	return xxx_messageInfo_Interest_Photo.Size(m)
+}
+func (m *Interest_Photo) XXX_DiscardUnknown() {
+	xxx_messageInfo_Interest_Photo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Interest_Photo proto.InternalMessageInfo
+
+func (m *Interest_Photo) GetPhotoRef() string {
 	if m != nil {
-		return m.Directions
+		return m.PhotoRef
+	}
+	return ""
+}
+
+func (m *Interest_Photo) GetAttributions() []string {
+	if m != nil {
+		return m.Attributions
 	}
 	return nil
 }
 
-type DirectionsReq struct {
-	ClientId             string   `protobuf:"bytes,1,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
-	InterestId           string   `protobuf:"bytes,2,opt,name=interest_id,json=interestId,proto3" json:"interest_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+type TransitStops struct {
+	Stops                []*TransitStop `protobuf:"bytes,1,rep,name=stops,proto3" json:"stops,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
 }
 
-func (m *DirectionsReq) Reset()         { *m = DirectionsReq{} }
-func (m *DirectionsReq) String() string { return proto.CompactTextString(m) }
-func (*DirectionsReq) ProtoMessage()    {}
-func (*DirectionsReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_d59414a4a69a1b93, []int{7}
+func (m *TransitStops) Reset()         { *m = TransitStops{} }
+func (m *TransitStops) String() string { return proto.CompactTextString(m) }
+func (*TransitStops) ProtoMessage()    {}
+func (*TransitStops) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_c324304aebe1cb28, []int{7}
 }
-func (m *DirectionsReq) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DirectionsReq.Unmarshal(m, b)
+func (m *TransitStops) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TransitStops.Unmarshal(m, b)
 }
-func (m *DirectionsReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DirectionsReq.Marshal(b, m, deterministic)
+func (m *TransitStops) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TransitStops.Marshal(b, m, deterministic)
 }
-func (dst *DirectionsReq) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DirectionsReq.Merge(dst, src)
+func (dst *TransitStops) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TransitStops.Merge(dst, src)
 }
-func (m *DirectionsReq) XXX_Size() int {
-	return xxx_messageInfo_DirectionsReq.Size(m)
+func (m *TransitStops) XXX_Size() int {
+	return xxx_messageInfo_TransitStops.Size(m)
 }
-func (m *DirectionsReq) XXX_DiscardUnknown() {
-	xxx_messageInfo_DirectionsReq.DiscardUnknown(m)
+func (m *TransitStops) XXX_DiscardUnknown() {
+	xxx_messageInfo_TransitStops.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_DirectionsReq proto.InternalMessageInfo
+var xxx_messageInfo_TransitStops proto.InternalMessageInfo
 
-func (m *DirectionsReq) GetClientId() string {
+func (m *TransitStops) GetStops() []*TransitStop {
 	if m != nil {
-		return m.ClientId
+		return m.Stops
 	}
-	return ""
+	return nil
 }
 
-func (m *DirectionsReq) GetInterestId() string {
+type TransitStop struct {
+	Coordinates          *Coordinates `protobuf:"bytes,1,opt,name=coordinates,proto3" json:"coordinates,omitempty"`
+	Routes               []string     `protobuf:"bytes,2,rep,name=routes,proto3" json:"routes,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *TransitStop) Reset()         { *m = TransitStop{} }
+func (m *TransitStop) String() string { return proto.CompactTextString(m) }
+func (*TransitStop) ProtoMessage()    {}
+func (*TransitStop) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_c324304aebe1cb28, []int{8}
+}
+func (m *TransitStop) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TransitStop.Unmarshal(m, b)
+}
+func (m *TransitStop) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TransitStop.Marshal(b, m, deterministic)
+}
+func (dst *TransitStop) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TransitStop.Merge(dst, src)
+}
+func (m *TransitStop) XXX_Size() int {
+	return xxx_messageInfo_TransitStop.Size(m)
+}
+func (m *TransitStop) XXX_DiscardUnknown() {
+	xxx_messageInfo_TransitStop.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TransitStop proto.InternalMessageInfo
+
+func (m *TransitStop) GetCoordinates() *Coordinates {
 	if m != nil {
-		return m.InterestId
+		return m.Coordinates
 	}
-	return ""
+	return nil
 }
 
-type DirectionsResp struct {
-	InterestId           string   `protobuf:"bytes,1,opt,name=interest_id,json=interestId,proto3" json:"interest_id,omitempty"`
-	Legs                 [][]byte `protobuf:"bytes,2,rep,name=legs,proto3" json:"legs,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *DirectionsResp) Reset()         { *m = DirectionsResp{} }
-func (m *DirectionsResp) String() string { return proto.CompactTextString(m) }
-func (*DirectionsResp) ProtoMessage()    {}
-func (*DirectionsResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_d59414a4a69a1b93, []int{8}
-}
-func (m *DirectionsResp) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DirectionsResp.Unmarshal(m, b)
-}
-func (m *DirectionsResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DirectionsResp.Marshal(b, m, deterministic)
-}
-func (dst *DirectionsResp) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DirectionsResp.Merge(dst, src)
-}
-func (m *DirectionsResp) XXX_Size() int {
-	return xxx_messageInfo_DirectionsResp.Size(m)
-}
-func (m *DirectionsResp) XXX_DiscardUnknown() {
-	xxx_messageInfo_DirectionsResp.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DirectionsResp proto.InternalMessageInfo
-
-func (m *DirectionsResp) GetInterestId() string {
+func (m *TransitStop) GetRoutes() []string {
 	if m != nil {
-		return m.InterestId
-	}
-	return ""
-}
-
-func (m *DirectionsResp) GetLegs() [][]byte {
-	if m != nil {
-		return m.Legs
+		return m.Routes
 	}
 	return nil
 }
@@ -505,8 +552,9 @@ func init() {
 	proto.RegisterType((*Context)(nil), "open_now.Context")
 	proto.RegisterType((*PointsOfInterest)(nil), "open_now.PointsOfInterest")
 	proto.RegisterType((*Interest)(nil), "open_now.Interest")
-	proto.RegisterType((*DirectionsReq)(nil), "open_now.DirectionsReq")
-	proto.RegisterType((*DirectionsResp)(nil), "open_now.DirectionsResp")
+	proto.RegisterType((*Interest_Photo)(nil), "open_now.Interest.Photo")
+	proto.RegisterType((*TransitStops)(nil), "open_now.TransitStops")
+	proto.RegisterType((*TransitStop)(nil), "open_now.TransitStop")
 	proto.RegisterEnum("open_now.Context_Situation", Context_Situation_name, Context_Situation_value)
 	proto.RegisterEnum("open_now.Interest_Type", Interest_Type_name, Interest_Type_value)
 }
@@ -525,7 +573,7 @@ const _ = grpc.SupportPackageIsVersion4
 type CoreClient interface {
 	GetStatus(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Status, error)
 	GetPointsOfInterest(ctx context.Context, in *Position, opts ...grpc.CallOption) (*PointsOfInterest, error)
-	GetDirections(ctx context.Context, in *DirectionsReq, opts ...grpc.CallOption) (*DirectionsResp, error)
+	GetTransitStops(ctx context.Context, in *Position, opts ...grpc.CallOption) (*TransitStops, error)
 }
 
 type coreClient struct {
@@ -554,9 +602,9 @@ func (c *coreClient) GetPointsOfInterest(ctx context.Context, in *Position, opts
 	return out, nil
 }
 
-func (c *coreClient) GetDirections(ctx context.Context, in *DirectionsReq, opts ...grpc.CallOption) (*DirectionsResp, error) {
-	out := new(DirectionsResp)
-	err := c.cc.Invoke(ctx, "/open_now.Core/GetDirections", in, out, opts...)
+func (c *coreClient) GetTransitStops(ctx context.Context, in *Position, opts ...grpc.CallOption) (*TransitStops, error) {
+	out := new(TransitStops)
+	err := c.cc.Invoke(ctx, "/open_now.Core/GetTransitStops", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -567,7 +615,7 @@ func (c *coreClient) GetDirections(ctx context.Context, in *DirectionsReq, opts 
 type CoreServer interface {
 	GetStatus(context.Context, *Empty) (*Status, error)
 	GetPointsOfInterest(context.Context, *Position) (*PointsOfInterest, error)
-	GetDirections(context.Context, *DirectionsReq) (*DirectionsResp, error)
+	GetTransitStops(context.Context, *Position) (*TransitStops, error)
 }
 
 func RegisterCoreServer(s *grpc.Server, srv CoreServer) {
@@ -610,20 +658,20 @@ func _Core_GetPointsOfInterest_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Core_GetDirections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DirectionsReq)
+func _Core_GetTransitStops_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Position)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServer).GetDirections(ctx, in)
+		return srv.(CoreServer).GetTransitStops(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/open_now.Core/GetDirections",
+		FullMethod: "/open_now.Core/GetTransitStops",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).GetDirections(ctx, req.(*DirectionsReq))
+		return srv.(CoreServer).GetTransitStops(ctx, req.(*Position))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -641,52 +689,56 @@ var _Core_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Core_GetPointsOfInterest_Handler,
 		},
 		{
-			MethodName: "GetDirections",
-			Handler:    _Core_GetDirections_Handler,
+			MethodName: "GetTransitStops",
+			Handler:    _Core_GetTransitStops_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "service.proto",
 }
 
-func init() { proto.RegisterFile("service.proto", fileDescriptor_service_d59414a4a69a1b93) }
+func init() { proto.RegisterFile("service.proto", fileDescriptor_service_c324304aebe1cb28) }
 
-var fileDescriptor_service_d59414a4a69a1b93 = []byte{
-	// 568 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0x51, 0x8f, 0xd2, 0x4c,
-	0x14, 0xa5, 0xb4, 0xbb, 0xb4, 0xb7, 0xcb, 0x6e, 0xbf, 0xf9, 0x62, 0x6c, 0xd0, 0xc4, 0x3a, 0x0f,
-	0xa6, 0x89, 0x86, 0x35, 0x18, 0x63, 0xe2, 0x9b, 0x01, 0x64, 0x89, 0x0a, 0x9b, 0xd9, 0xae, 0xc6,
-	0x27, 0x82, 0xed, 0x48, 0x26, 0x81, 0x99, 0xda, 0x19, 0x54, 0x7e, 0x86, 0xaf, 0xfe, 0x21, 0xff,
-	0x96, 0xe9, 0x50, 0xda, 0xc2, 0xaa, 0xd9, 0xb7, 0xe9, 0xb9, 0xe7, 0xde, 0xdc, 0x7b, 0xce, 0xbd,
-	0x85, 0xb6, 0xa4, 0xd9, 0x57, 0x16, 0xd3, 0x6e, 0x9a, 0x09, 0x25, 0x90, 0x2d, 0x52, 0xca, 0x67,
-	0x5c, 0x7c, 0xc3, 0x36, 0x1c, 0x5f, 0xa9, 0xb9, 0x5a, 0x4b, 0xdc, 0x82, 0xa3, 0xe1, 0x2a, 0x55,
-	0x1b, 0x3c, 0x02, 0xb7, 0x2f, 0x44, 0x96, 0x30, 0x3e, 0x57, 0x54, 0xa2, 0x0e, 0xd8, 0xcb, 0xb9,
-	0x62, 0x6a, 0x9d, 0x50, 0xdf, 0x08, 0x8c, 0xd0, 0x20, 0xe5, 0x37, 0xba, 0x0f, 0xce, 0x52, 0xf0,
-	0xc5, 0x36, 0xd8, 0xd4, 0xc1, 0x0a, 0xc0, 0x3f, 0x0c, 0xb0, 0x2f, 0x85, 0x64, 0x8a, 0x09, 0x8e,
-	0xee, 0x81, 0x13, 0x2f, 0x19, 0xe5, 0x6a, 0xc6, 0x12, 0x5d, 0xc7, 0x21, 0xf6, 0x16, 0x18, 0x27,
-	0xe8, 0x1c, 0x1c, 0xc9, 0xd4, 0x7a, 0x9e, 0x33, 0x75, 0x1d, 0xb7, 0xf7, 0x5f, 0x77, 0xd7, 0x63,
-	0xb7, 0x2f, 0xb8, 0xa2, 0xdf, 0x15, 0xa9, 0x38, 0xe8, 0x05, 0xb8, 0x71, 0xd5, 0xa3, 0x6f, 0xea,
-	0x94, 0x3b, 0xf5, 0x94, 0x32, 0x48, 0xea, 0x4c, 0xfc, 0x12, 0x5a, 0x45, 0x39, 0x7c, 0x0e, 0xce,
-	0x55, 0x59, 0xd0, 0x85, 0xd6, 0xf5, 0xe4, 0xcd, 0x64, 0xfa, 0x61, 0xe2, 0x35, 0xf2, 0x8f, 0xf7,
-	0xc3, 0x8b, 0x71, 0xff, 0xed, 0xd0, 0x33, 0x90, 0x0d, 0xd6, 0xeb, 0xe9, 0x34, 0xf2, 0x9a, 0x78,
-	0x00, 0xde, 0xa5, 0x60, 0x5c, 0xc9, 0xe9, 0xe7, 0x31, 0x57, 0x34, 0xa3, 0x52, 0xa1, 0xa7, 0xe0,
-	0xb0, 0xe2, 0x2d, 0x7d, 0x23, 0x30, 0x43, 0xb7, 0x87, 0xaa, 0x36, 0x76, 0x34, 0x52, 0x91, 0xf0,
-	0x4f, 0x13, 0xec, 0x32, 0xfd, 0x01, 0xb8, 0xbb, 0x48, 0xa5, 0x0b, 0xec, 0xa0, 0x71, 0x82, 0x10,
-	0x58, 0x7c, 0xbe, 0xda, 0x8a, 0xeb, 0x10, 0xfd, 0x46, 0x01, 0xb8, 0x09, 0x95, 0x71, 0xc6, 0x52,
-	0xad, 0x97, 0xa9, 0x43, 0x75, 0x08, 0x3d, 0x84, 0x93, 0xbc, 0x07, 0xc6, 0x17, 0x33, 0xc5, 0x56,
-	0xd4, 0xb7, 0x02, 0x23, 0x34, 0x89, 0x5b, 0x60, 0x11, 0x5b, 0xd1, 0x9c, 0x12, 0x2f, 0x85, 0x2c,
-	0x29, 0x47, 0x5b, 0x4a, 0x81, 0x69, 0xca, 0x63, 0xb0, 0xd4, 0x26, 0xa5, 0xfe, 0x71, 0x60, 0x84,
-	0xa7, 0xbd, 0xbb, 0x37, 0xc7, 0xea, 0x46, 0x9b, 0x94, 0x12, 0x4d, 0x3a, 0x74, 0xa4, 0x75, 0x5b,
-	0x47, 0xd0, 0x23, 0x38, 0x5b, 0x31, 0xbe, 0x56, 0x54, 0xce, 0x94, 0x98, 0x25, 0x54, 0x2a, 0xdf,
-	0x0e, 0x8c, 0xf0, 0x88, 0xb4, 0x0b, 0x38, 0x12, 0x83, 0x5c, 0xaa, 0xe7, 0x00, 0x09, 0xcb, 0x68,
-	0x9c, 0x0f, 0x28, 0x7d, 0x47, 0x4b, 0xfd, 0x97, 0xfa, 0x35, 0x22, 0x7e, 0x02, 0x56, 0xde, 0xe5,
-	0xbe, 0xc1, 0x6d, 0x70, 0x5e, 0x5d, 0x47, 0x17, 0x53, 0x32, 0x8e, 0x3e, 0x96, 0x16, 0x0f, 0xbc,
-	0x26, 0x7e, 0x07, 0xed, 0x41, 0x99, 0x4b, 0xe8, 0x97, 0x7f, 0xaf, 0xed, 0x81, 0x7b, 0xcd, 0x43,
-	0xf7, 0xf0, 0x10, 0x4e, 0xeb, 0xe5, 0x64, 0x7a, 0x2b, 0xc3, 0x97, 0x74, 0x21, 0xfd, 0x66, 0x60,
-	0x86, 0x27, 0x44, 0xbf, 0x7b, 0xbf, 0x0c, 0xb0, 0xfa, 0x22, 0xa3, 0xf9, 0xb6, 0x8d, 0xa8, 0xda,
-	0x1e, 0x2c, 0x3a, 0xab, 0x86, 0xd7, 0x87, 0xdb, 0xf1, 0x2a, 0xa0, 0xb8, 0xe9, 0x06, 0x1a, 0xc1,
-	0xff, 0x23, 0xaa, 0x6e, 0xac, 0x6d, 0x6d, 0x47, 0x77, 0x17, 0xda, 0xe9, 0xd4, 0xb1, 0x7d, 0x3e,
-	0x6e, 0xa0, 0x01, 0xb4, 0x47, 0x54, 0x55, 0xd3, 0xa0, 0xda, 0x3e, 0xec, 0x49, 0xd6, 0xf1, 0xff,
-	0x1c, 0x90, 0x29, 0x6e, 0x7c, 0x3a, 0xd6, 0xff, 0x9f, 0x67, 0xbf, 0x03, 0x00, 0x00, 0xff, 0xff,
-	0x66, 0x3a, 0x5c, 0xb6, 0x90, 0x04, 0x00, 0x00,
+var fileDescriptor_service_c324304aebe1cb28 = []byte{
+	// 630 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0xcb, 0x6e, 0xd3, 0x40,
+	0x14, 0x8d, 0x13, 0xe7, 0xe1, 0x9b, 0x3e, 0xcc, 0x14, 0x8a, 0x95, 0x22, 0x11, 0xcd, 0x2a, 0x12,
+	0x52, 0x5a, 0xc2, 0x02, 0x21, 0x16, 0xa8, 0x4a, 0x82, 0x6b, 0x51, 0xc5, 0xd5, 0xc4, 0x05, 0xb1,
+	0x21, 0x72, 0xe3, 0x29, 0x8c, 0x94, 0x7a, 0x2c, 0xcf, 0x04, 0xe8, 0x57, 0xf1, 0x0f, 0xfc, 0x07,
+	0xff, 0x82, 0x66, 0x1c, 0x3f, 0xd2, 0x76, 0xd1, 0x9d, 0xe7, 0xdc, 0x73, 0xee, 0xdb, 0x17, 0x76,
+	0x05, 0x4d, 0x7f, 0xb2, 0x25, 0x1d, 0x26, 0x29, 0x97, 0x1c, 0x75, 0x78, 0x42, 0xe3, 0x45, 0xcc,
+	0x7f, 0xe1, 0x0e, 0xb4, 0xe6, 0x32, 0x94, 0x6b, 0x81, 0xdb, 0xd0, 0x9c, 0xde, 0x24, 0xf2, 0x16,
+	0xbb, 0xd0, 0x1d, 0x73, 0x9e, 0x46, 0x2c, 0x0e, 0x25, 0x15, 0xa8, 0x07, 0x9d, 0x55, 0x28, 0x99,
+	0x5c, 0x47, 0xd4, 0x31, 0xfa, 0xc6, 0xc0, 0x20, 0xc5, 0x1b, 0xbd, 0x00, 0x6b, 0xc5, 0xe3, 0xef,
+	0x99, 0xb1, 0xae, 0x8d, 0x25, 0x80, 0xff, 0x18, 0xd0, 0xb9, 0xe0, 0x82, 0x49, 0xc6, 0x63, 0x74,
+	0x04, 0xd6, 0x72, 0xc5, 0x68, 0x2c, 0x17, 0x2c, 0xd2, 0x7e, 0x2c, 0xd2, 0xc9, 0x00, 0x2f, 0x42,
+	0xc7, 0x60, 0x09, 0x26, 0xd7, 0xa1, 0x62, 0x6a, 0x3f, 0xdd, 0xd1, 0x93, 0x61, 0x9e, 0xe3, 0x70,
+	0xcc, 0x63, 0x49, 0x7f, 0x4b, 0x52, 0x72, 0x54, 0xe0, 0x88, 0xa5, 0x74, 0xa9, 0x05, 0x8d, 0xbe,
+	0x31, 0xa8, 0x93, 0x12, 0x40, 0x6f, 0xa1, 0xbb, 0x2c, 0x2b, 0x70, 0x4c, 0xed, 0xf0, 0x59, 0xd5,
+	0x61, 0x61, 0x24, 0x55, 0x26, 0x5e, 0x43, 0x7b, 0x13, 0x0c, 0xbd, 0xab, 0xa6, 0xa4, 0xf2, 0xdd,
+	0x1b, 0x1d, 0xdd, 0x4b, 0x69, 0x38, 0xcf, 0x29, 0x95, 0xe4, 0xf0, 0x31, 0x58, 0x05, 0x8e, 0xba,
+	0xd0, 0xbe, 0x9c, 0x7d, 0x9a, 0xf9, 0x5f, 0x66, 0x76, 0x4d, 0x3d, 0x3e, 0x4f, 0xcf, 0xbc, 0xf1,
+	0xf9, 0xd4, 0x36, 0x50, 0x07, 0xcc, 0x8f, 0xbe, 0x1f, 0xd8, 0x75, 0x3c, 0x01, 0xfb, 0x82, 0xb3,
+	0x58, 0x0a, 0xff, 0xda, 0x8b, 0x25, 0x4d, 0xa9, 0x90, 0xe8, 0x04, 0x2c, 0xb6, 0xf9, 0x16, 0x8e,
+	0xd1, 0x6f, 0x0c, 0xba, 0x23, 0x54, 0xc6, 0xcf, 0x69, 0xa4, 0x24, 0xe1, 0x7f, 0x0d, 0xe8, 0x14,
+	0xf2, 0x97, 0xd0, 0xcd, 0x2d, 0x65, 0xc3, 0x21, 0x87, 0xbc, 0x08, 0x21, 0x30, 0xe3, 0xf0, 0x26,
+	0x9b, 0x9a, 0x45, 0xf4, 0x37, 0x7a, 0x0d, 0x4f, 0x57, 0x7c, 0xa9, 0xf3, 0x5e, 0x44, 0x54, 0x2c,
+	0x53, 0x96, 0x14, 0x0d, 0xb6, 0xc8, 0x41, 0x6e, 0x9b, 0x94, 0x26, 0x25, 0x29, 0xe2, 0x54, 0x25,
+	0x66, 0x26, 0xc9, 0x6d, 0x55, 0xc9, 0x09, 0xb4, 0x92, 0x1f, 0x5c, 0x72, 0xe1, 0x34, 0x75, 0x59,
+	0xce, 0xfd, 0xb2, 0x86, 0x17, 0x8a, 0x40, 0x36, 0x3c, 0xf4, 0x0a, 0x4c, 0x79, 0x9b, 0x50, 0xa7,
+	0xa5, 0xc7, 0xf0, 0xfc, 0x01, 0x7e, 0x70, 0x9b, 0x50, 0xa2, 0x49, 0x77, 0x87, 0xdf, 0x7e, 0xec,
+	0xf0, 0x7b, 0x67, 0xd0, 0xd4, 0x61, 0xd5, 0xaa, 0xea, 0xc0, 0x8b, 0x94, 0x5e, 0xe7, 0xab, 0xaa,
+	0x01, 0x42, 0xaf, 0x11, 0x86, 0x9d, 0x50, 0xca, 0x94, 0x5d, 0xad, 0x55, 0x31, 0xc2, 0xa9, 0xf7,
+	0x1b, 0x03, 0x8b, 0x6c, 0x61, 0x38, 0x00, 0x53, 0x25, 0xb4, 0x3d, 0xfb, 0x5d, 0xb0, 0x4e, 0x2f,
+	0x83, 0x33, 0x9f, 0x78, 0xc1, 0xd7, 0x62, 0xfa, 0x13, 0xbb, 0x8e, 0x2c, 0x68, 0xce, 0x03, 0x9f,
+	0x4c, 0xed, 0x86, 0x12, 0x9c, 0xfb, 0x13, 0xd7, 0x9b, 0xb9, 0xb6, 0x89, 0xf6, 0x00, 0x4e, 0x83,
+	0x80, 0x9c, 0x8e, 0x03, 0xcf, 0x9f, 0xd9, 0x4d, 0xfc, 0x1e, 0x76, 0x82, 0x34, 0x8c, 0x05, 0x93,
+	0x73, 0xc9, 0x13, 0xd5, 0x95, 0xa6, 0x50, 0x1f, 0x9b, 0xed, 0xa8, 0x94, 0x58, 0xa1, 0x91, 0x8c,
+	0x83, 0xbf, 0x41, 0xb7, 0x82, 0xde, 0x6d, 0x92, 0xf1, 0xd8, 0x26, 0xa1, 0x43, 0x68, 0xa5, 0x7c,
+	0xad, 0x34, 0x59, 0xe1, 0x9b, 0xd7, 0xe8, 0xaf, 0x01, 0xe6, 0x98, 0xa7, 0x54, 0xed, 0xad, 0x4b,
+	0x65, 0x76, 0x53, 0xd0, 0x7e, 0xe9, 0x51, 0xdf, 0x96, 0x9e, 0x5d, 0x02, 0x9b, 0xb3, 0x53, 0x43,
+	0x2e, 0x1c, 0xb8, 0x54, 0xde, 0xfb, 0x01, 0x2a, 0xdb, 0x9e, 0x1f, 0x91, 0x5e, 0xaf, 0x8a, 0x6d,
+	0xf3, 0x71, 0x0d, 0x7d, 0x80, 0x7d, 0x97, 0xca, 0xad, 0x1e, 0x3d, 0xe4, 0xe4, 0xf0, 0xc1, 0x46,
+	0x09, 0x5c, 0xbb, 0x6a, 0xe9, 0xeb, 0xf8, 0xe6, 0x7f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x50, 0xb7,
+	0x1f, 0x20, 0x2e, 0x05, 0x00, 0x00,
 }

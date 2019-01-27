@@ -72,6 +72,11 @@ struct OpenNow_Position {
   /// Clears the value of `situation`. Subsequent reads from it will return its default value.
   mutating func clearSituation() {_uniqueStorage()._situation = nil}
 
+  var direction: Float {
+    get {return _storage._direction}
+    set {_uniqueStorage()._direction = newValue}
+  }
+
   var coordinates: OpenNow_Coordinates {
     get {return _storage._coordinates ?? OpenNow_Coordinates()}
     set {_uniqueStorage()._coordinates = newValue}
@@ -92,6 +97,8 @@ struct OpenNow_Context {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
+
+  var situation: OpenNow_Context.Situation = .unknown
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -169,19 +176,19 @@ struct OpenNow_Interest {
     set {_uniqueStorage()._name = newValue}
   }
 
-  var description_p: String {
-    get {return _storage._description_p}
-    set {_uniqueStorage()._description_p = newValue}
+  var locationDescription: String {
+    get {return _storage._locationDescription}
+    set {_uniqueStorage()._locationDescription = newValue}
   }
 
-  var openingTime: Int64 {
-    get {return _storage._openingTime}
-    set {_uniqueStorage()._openingTime = newValue}
+  var interestDescription: String {
+    get {return _storage._interestDescription}
+    set {_uniqueStorage()._interestDescription = newValue}
   }
 
-  var closingTime: Int64 {
-    get {return _storage._closingTime}
-    set {_uniqueStorage()._closingTime = newValue}
+  var photos: [OpenNow_Interest.Photo] {
+    get {return _storage._photos}
+    set {_uniqueStorage()._photos = newValue}
   }
 
   var type: OpenNow_Interest.TypeEnum {
@@ -198,16 +205,6 @@ struct OpenNow_Interest {
   /// Clears the value of `coordinates`. Subsequent reads from it will return its default value.
   mutating func clearCoordinates() {_uniqueStorage()._coordinates = nil}
 
-  var minutesToDest: Int32 {
-    get {return _storage._minutesToDest}
-    set {_uniqueStorage()._minutesToDest = newValue}
-  }
-
-  var directions: [OpenNow_Coordinates] {
-    get {return _storage._directions}
-    set {_uniqueStorage()._directions = newValue}
-  }
-
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum TypeEnum: SwiftProtobuf.Enum {
@@ -215,6 +212,9 @@ struct OpenNow_Interest {
     case unknown // = 0
     case authority // = 1
     case food // = 2
+    case store // = 3
+    case lodging // = 4
+    case attraction // = 5
     case UNRECOGNIZED(Int)
 
     init() {
@@ -226,6 +226,9 @@ struct OpenNow_Interest {
       case 0: self = .unknown
       case 1: self = .authority
       case 2: self = .food
+      case 3: self = .store
+      case 4: self = .lodging
+      case 5: self = .attraction
       default: self = .UNRECOGNIZED(rawValue)
       }
     }
@@ -235,10 +238,27 @@ struct OpenNow_Interest {
       case .unknown: return 0
       case .authority: return 1
       case .food: return 2
+      case .store: return 3
+      case .lodging: return 4
+      case .attraction: return 5
       case .UNRECOGNIZED(let i): return i
       }
     }
 
+  }
+
+  struct Photo {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var photoRef: String = String()
+
+    var attributions: [String] = []
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
   }
 
   init() {}
@@ -254,37 +274,50 @@ extension OpenNow_Interest.TypeEnum: CaseIterable {
     .unknown,
     .authority,
     .food,
+    .store,
+    .lodging,
+    .attraction,
   ]
 }
 
 #endif  // swift(>=4.2)
 
-struct OpenNow_DirectionsReq {
+struct OpenNow_TransitStops {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var clientID: String = String()
-
-  var interestID: String = String()
+  var stops: [OpenNow_TransitStop] = []
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 }
 
-struct OpenNow_DirectionsResp {
+struct OpenNow_TransitStop {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var interestID: String = String()
+  var coordinates: OpenNow_Coordinates {
+    get {return _storage._coordinates ?? OpenNow_Coordinates()}
+    set {_uniqueStorage()._coordinates = newValue}
+  }
+  /// Returns true if `coordinates` has been explicitly set.
+  var hasCoordinates: Bool {return _storage._coordinates != nil}
+  /// Clears the value of `coordinates`. Subsequent reads from it will return its default value.
+  mutating func clearCoordinates() {_uniqueStorage()._coordinates = nil}
 
-  var legs: [Data] = []
+  var routes: [String] {
+    get {return _storage._routes}
+    set {_uniqueStorage()._routes = newValue}
+  }
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
+
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -369,12 +402,14 @@ extension OpenNow_Position: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "client_id"),
     2: .same(proto: "situation"),
-    3: .same(proto: "coordinates"),
+    3: .same(proto: "direction"),
+    4: .same(proto: "coordinates"),
   ]
 
   fileprivate class _StorageClass {
     var _clientID: String = String()
     var _situation: OpenNow_Context? = nil
+    var _direction: Float = 0
     var _coordinates: OpenNow_Coordinates? = nil
 
     static let defaultInstance = _StorageClass()
@@ -384,6 +419,7 @@ extension OpenNow_Position: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     init(copying source: _StorageClass) {
       _clientID = source._clientID
       _situation = source._situation
+      _direction = source._direction
       _coordinates = source._coordinates
     }
   }
@@ -402,7 +438,8 @@ extension OpenNow_Position: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
         switch fieldNumber {
         case 1: try decoder.decodeSingularStringField(value: &_storage._clientID)
         case 2: try decoder.decodeSingularMessageField(value: &_storage._situation)
-        case 3: try decoder.decodeSingularMessageField(value: &_storage._coordinates)
+        case 3: try decoder.decodeSingularFloatField(value: &_storage._direction)
+        case 4: try decoder.decodeSingularMessageField(value: &_storage._coordinates)
         default: break
         }
       }
@@ -417,8 +454,11 @@ extension OpenNow_Position: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       if let v = _storage._situation {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
       }
+      if _storage._direction != 0 {
+        try visitor.visitSingularFloatField(value: _storage._direction, fieldNumber: 3)
+      }
       if let v = _storage._coordinates {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
       }
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -431,6 +471,7 @@ extension OpenNow_Position: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
         let rhs_storage = _args.1
         if _storage._clientID != rhs_storage._clientID {return false}
         if _storage._situation != rhs_storage._situation {return false}
+        if _storage._direction != rhs_storage._direction {return false}
         if _storage._coordinates != rhs_storage._coordinates {return false}
         return true
       }
@@ -443,18 +484,28 @@ extension OpenNow_Position: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
 
 extension OpenNow_Context: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".Context"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "situation"),
+  ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularEnumField(value: &self.situation)
+      default: break
+      }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.situation != .unknown {
+      try visitor.visitSingularEnumField(value: self.situation, fieldNumber: 1)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: OpenNow_Context, rhs: OpenNow_Context) -> Bool {
+    if lhs.situation != rhs.situation {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -502,25 +553,21 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "interest_id"),
     2: .same(proto: "name"),
-    3: .same(proto: "description"),
-    4: .standard(proto: "opening_time"),
-    5: .standard(proto: "closing_time"),
+    3: .standard(proto: "location_description"),
+    4: .standard(proto: "interest_description"),
+    5: .same(proto: "photos"),
     6: .same(proto: "type"),
     7: .same(proto: "coordinates"),
-    8: .standard(proto: "minutes_to_dest"),
-    9: .same(proto: "directions"),
   ]
 
   fileprivate class _StorageClass {
     var _interestID: String = String()
     var _name: String = String()
-    var _description_p: String = String()
-    var _openingTime: Int64 = 0
-    var _closingTime: Int64 = 0
+    var _locationDescription: String = String()
+    var _interestDescription: String = String()
+    var _photos: [OpenNow_Interest.Photo] = []
     var _type: OpenNow_Interest.TypeEnum = .unknown
     var _coordinates: OpenNow_Coordinates? = nil
-    var _minutesToDest: Int32 = 0
-    var _directions: [OpenNow_Coordinates] = []
 
     static let defaultInstance = _StorageClass()
 
@@ -529,13 +576,11 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     init(copying source: _StorageClass) {
       _interestID = source._interestID
       _name = source._name
-      _description_p = source._description_p
-      _openingTime = source._openingTime
-      _closingTime = source._closingTime
+      _locationDescription = source._locationDescription
+      _interestDescription = source._interestDescription
+      _photos = source._photos
       _type = source._type
       _coordinates = source._coordinates
-      _minutesToDest = source._minutesToDest
-      _directions = source._directions
     }
   }
 
@@ -553,13 +598,11 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
         switch fieldNumber {
         case 1: try decoder.decodeSingularStringField(value: &_storage._interestID)
         case 2: try decoder.decodeSingularStringField(value: &_storage._name)
-        case 3: try decoder.decodeSingularStringField(value: &_storage._description_p)
-        case 4: try decoder.decodeSingularInt64Field(value: &_storage._openingTime)
-        case 5: try decoder.decodeSingularInt64Field(value: &_storage._closingTime)
+        case 3: try decoder.decodeSingularStringField(value: &_storage._locationDescription)
+        case 4: try decoder.decodeSingularStringField(value: &_storage._interestDescription)
+        case 5: try decoder.decodeRepeatedMessageField(value: &_storage._photos)
         case 6: try decoder.decodeSingularEnumField(value: &_storage._type)
         case 7: try decoder.decodeSingularMessageField(value: &_storage._coordinates)
-        case 8: try decoder.decodeSingularInt32Field(value: &_storage._minutesToDest)
-        case 9: try decoder.decodeRepeatedMessageField(value: &_storage._directions)
         default: break
         }
       }
@@ -574,26 +617,20 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       if !_storage._name.isEmpty {
         try visitor.visitSingularStringField(value: _storage._name, fieldNumber: 2)
       }
-      if !_storage._description_p.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._description_p, fieldNumber: 3)
+      if !_storage._locationDescription.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._locationDescription, fieldNumber: 3)
       }
-      if _storage._openingTime != 0 {
-        try visitor.visitSingularInt64Field(value: _storage._openingTime, fieldNumber: 4)
+      if !_storage._interestDescription.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._interestDescription, fieldNumber: 4)
       }
-      if _storage._closingTime != 0 {
-        try visitor.visitSingularInt64Field(value: _storage._closingTime, fieldNumber: 5)
+      if !_storage._photos.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._photos, fieldNumber: 5)
       }
       if _storage._type != .unknown {
         try visitor.visitSingularEnumField(value: _storage._type, fieldNumber: 6)
       }
       if let v = _storage._coordinates {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-      }
-      if _storage._minutesToDest != 0 {
-        try visitor.visitSingularInt32Field(value: _storage._minutesToDest, fieldNumber: 8)
-      }
-      if !_storage._directions.isEmpty {
-        try visitor.visitRepeatedMessageField(value: _storage._directions, fieldNumber: 9)
       }
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -606,13 +643,11 @@ extension OpenNow_Interest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
         let rhs_storage = _args.1
         if _storage._interestID != rhs_storage._interestID {return false}
         if _storage._name != rhs_storage._name {return false}
-        if _storage._description_p != rhs_storage._description_p {return false}
-        if _storage._openingTime != rhs_storage._openingTime {return false}
-        if _storage._closingTime != rhs_storage._closingTime {return false}
+        if _storage._locationDescription != rhs_storage._locationDescription {return false}
+        if _storage._interestDescription != rhs_storage._interestDescription {return false}
+        if _storage._photos != rhs_storage._photos {return false}
         if _storage._type != rhs_storage._type {return false}
         if _storage._coordinates != rhs_storage._coordinates {return false}
-        if _storage._minutesToDest != rhs_storage._minutesToDest {return false}
-        if _storage._directions != rhs_storage._directions {return false}
         return true
       }
       if !storagesAreEqual {return false}
@@ -627,74 +662,140 @@ extension OpenNow_Interest.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     0: .same(proto: "UNKNOWN"),
     1: .same(proto: "AUTHORITY"),
     2: .same(proto: "FOOD"),
+    3: .same(proto: "STORE"),
+    4: .same(proto: "LODGING"),
+    5: .same(proto: "ATTRACTION"),
   ]
 }
 
-extension OpenNow_DirectionsReq: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = _protobuf_package + ".DirectionsReq"
+extension OpenNow_Interest.Photo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = OpenNow_Interest.protoMessageName + ".Photo"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "client_id"),
-    2: .standard(proto: "interest_id"),
+    1: .standard(proto: "photo_ref"),
+    2: .same(proto: "attributions"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.clientID)
-      case 2: try decoder.decodeSingularStringField(value: &self.interestID)
+      case 1: try decoder.decodeSingularStringField(value: &self.photoRef)
+      case 2: try decoder.decodeRepeatedStringField(value: &self.attributions)
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.clientID.isEmpty {
-      try visitor.visitSingularStringField(value: self.clientID, fieldNumber: 1)
+    if !self.photoRef.isEmpty {
+      try visitor.visitSingularStringField(value: self.photoRef, fieldNumber: 1)
     }
-    if !self.interestID.isEmpty {
-      try visitor.visitSingularStringField(value: self.interestID, fieldNumber: 2)
+    if !self.attributions.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.attributions, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: OpenNow_DirectionsReq, rhs: OpenNow_DirectionsReq) -> Bool {
-    if lhs.clientID != rhs.clientID {return false}
-    if lhs.interestID != rhs.interestID {return false}
+  static func ==(lhs: OpenNow_Interest.Photo, rhs: OpenNow_Interest.Photo) -> Bool {
+    if lhs.photoRef != rhs.photoRef {return false}
+    if lhs.attributions != rhs.attributions {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension OpenNow_DirectionsResp: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = _protobuf_package + ".DirectionsResp"
+extension OpenNow_TransitStops: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".TransitStops"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "interest_id"),
-    2: .same(proto: "legs"),
+    1: .same(proto: "stops"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.interestID)
-      case 2: try decoder.decodeRepeatedBytesField(value: &self.legs)
+      case 1: try decoder.decodeRepeatedMessageField(value: &self.stops)
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.interestID.isEmpty {
-      try visitor.visitSingularStringField(value: self.interestID, fieldNumber: 1)
-    }
-    if !self.legs.isEmpty {
-      try visitor.visitRepeatedBytesField(value: self.legs, fieldNumber: 2)
+    if !self.stops.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.stops, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: OpenNow_DirectionsResp, rhs: OpenNow_DirectionsResp) -> Bool {
-    if lhs.interestID != rhs.interestID {return false}
-    if lhs.legs != rhs.legs {return false}
+  static func ==(lhs: OpenNow_TransitStops, rhs: OpenNow_TransitStops) -> Bool {
+    if lhs.stops != rhs.stops {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension OpenNow_TransitStop: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".TransitStop"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "coordinates"),
+    2: .same(proto: "routes"),
+  ]
+
+  fileprivate class _StorageClass {
+    var _coordinates: OpenNow_Coordinates? = nil
+    var _routes: [String] = []
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _coordinates = source._coordinates
+      _routes = source._routes
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        switch fieldNumber {
+        case 1: try decoder.decodeSingularMessageField(value: &_storage._coordinates)
+        case 2: try decoder.decodeRepeatedStringField(value: &_storage._routes)
+        default: break
+        }
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      if let v = _storage._coordinates {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+      }
+      if !_storage._routes.isEmpty {
+        try visitor.visitRepeatedStringField(value: _storage._routes, fieldNumber: 2)
+      }
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: OpenNow_TransitStop, rhs: OpenNow_TransitStop) -> Bool {
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._coordinates != rhs_storage._coordinates {return false}
+        if _storage._routes != rhs_storage._routes {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

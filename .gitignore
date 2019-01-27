@@ -1,1 +1,3 @@
-/backend/vendor
+/vendor
+.env
+inertia.toml

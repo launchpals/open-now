@@ -1,4 +1,4 @@
-# nwHacks 2019
+# nwHacks 2019: Open Now [![Deployed with Inertia](https://img.shields.io/badge/deploying%20with-inertia-blue.svg)](https://github.com/ubclaunchpad/inertia)
 
 ## Protobuf
 
