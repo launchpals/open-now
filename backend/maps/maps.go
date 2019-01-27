@@ -48,7 +48,7 @@ func (c *Client) PointsOfInterest(
 	ctx context.Context,
 	coords *open_now.Coordinates,
 	situation open_now.Context_Situation,
-) ([]open_now.Interest, error) {
+) ([]*open_now.Interest, error) {
 	var radius uint
 	switch situation {
 	case open_now.Context_FOOT:
@@ -72,7 +72,7 @@ func (c *Client) PointsOfInterest(
 		return nil, err
 	}
 
-	pois := []open_now.Interest{}
+	pois := []*open_now.Interest{}
 
 	for _, l := range resp.Results {
 		openTime, err := strconv.ParseInt(l.OpeningHours.Periods[0].Open.Time, 10, 64)
@@ -95,7 +95,7 @@ func (c *Client) PointsOfInterest(
 			},
 		}
 
-		pois = append(pois, poi)
+		pois = append(pois, &poi)
 
 		c.l.Debugw("location", "l", l)
 	}
