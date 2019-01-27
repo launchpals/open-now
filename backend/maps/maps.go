@@ -89,6 +89,18 @@ func (c *Client) PointsOfInterest(
 		c.l.Infof("IT IS NOT RAINING")
 	}
 
+	main, _ := rawJSON["main"].(map[string]interface{})
+	tempRaw, _ := main["temp"]
+	temp, _ := tempRaw.(float64)
+
+	// >35 deg c
+	if temp > 308 {
+		radius *= 0.75
+		c.l.Infof("IT IS TOO HOT: %f", temp)
+	} else {
+		c.l.Infof("IT IS NOT TOO HOT: %f", temp)
+	}
+
 	resp, err := c.gm.NearbySearch(ctx, &gmaps.NearbySearchRequest{
 		Location: &gmaps.LatLng{
 			Lat: coords.GetLatitude(),
