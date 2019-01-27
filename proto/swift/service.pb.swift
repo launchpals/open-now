@@ -282,34 +282,6 @@ extension OpenNow_Interest.TypeEnum: CaseIterable {
 
 #endif  // swift(>=4.2)
 
-struct OpenNow_DirectionsReq {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var clientID: String = String()
-
-  var interestID: String = String()
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct OpenNow_DirectionsResp {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var interestID: String = String()
-
-  var legs: [Data] = []
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
 struct OpenNow_TransitStops {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -726,76 +698,6 @@ extension OpenNow_Interest.Photo: SwiftProtobuf.Message, SwiftProtobuf._MessageI
   static func ==(lhs: OpenNow_Interest.Photo, rhs: OpenNow_Interest.Photo) -> Bool {
     if lhs.photoRef != rhs.photoRef {return false}
     if lhs.attributions != rhs.attributions {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension OpenNow_DirectionsReq: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = _protobuf_package + ".DirectionsReq"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "client_id"),
-    2: .standard(proto: "interest_id"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.clientID)
-      case 2: try decoder.decodeSingularStringField(value: &self.interestID)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.clientID.isEmpty {
-      try visitor.visitSingularStringField(value: self.clientID, fieldNumber: 1)
-    }
-    if !self.interestID.isEmpty {
-      try visitor.visitSingularStringField(value: self.interestID, fieldNumber: 2)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: OpenNow_DirectionsReq, rhs: OpenNow_DirectionsReq) -> Bool {
-    if lhs.clientID != rhs.clientID {return false}
-    if lhs.interestID != rhs.interestID {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension OpenNow_DirectionsResp: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = _protobuf_package + ".DirectionsResp"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "interest_id"),
-    2: .same(proto: "legs"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.interestID)
-      case 2: try decoder.decodeRepeatedBytesField(value: &self.legs)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.interestID.isEmpty {
-      try visitor.visitSingularStringField(value: self.interestID, fieldNumber: 1)
-    }
-    if !self.legs.isEmpty {
-      try visitor.visitRepeatedBytesField(value: self.legs, fieldNumber: 2)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: OpenNow_DirectionsResp, rhs: OpenNow_DirectionsResp) -> Bool {
-    if lhs.interestID != rhs.interestID {return false}
-    if lhs.legs != rhs.legs {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
