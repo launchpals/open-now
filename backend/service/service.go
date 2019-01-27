@@ -16,6 +16,7 @@ import (
 	"go.uber.org/zap/zapcore"
 
 	"github.com/launchpals/open-now/backend/maps"
+	"github.com/launchpals/open-now/backend/transit"
 	open_now "github.com/launchpals/open-now/proto/go"
 )
 
@@ -25,13 +26,15 @@ type Server struct {
 	core open_now.CoreServer
 
 	m *maps.Client
+	t *transit.Client
 }
 
 // New instantiates a new server
-func New(l *zap.SugaredLogger, m *maps.Client) (*Server, error) {
+func New(l *zap.SugaredLogger, m *maps.Client, t *transit.Client) (*Server, error) {
 	return &Server{
 		l: l,
 		m: m,
+		t: t,
 	}, nil
 }
 
@@ -105,6 +108,13 @@ func (s *Server) GetDirections(context.Context, *open_now.DirectionsReq) (*open_
 }
 
 // GetTransitStops blah blah
-func (s *Server) GetTransitStops(context.Context, *open_now.Position) (*open_now.TransitStops, error) {
-	return nil, nil
+func (s *Server) GetTransitStops(ctx context.Context, pos *open_now.Position) (*open_now.TransitStops, error) {
+	stops, err := s.t.TransitStops(ctx, pos.Coordinates)
+	if err != nil {
+		return nil, grpc.Errorf(codes.Internal, err.Error())
+	}
+
+	return &open_now.TransitStops{
+		Stops: stops,
+	}, nil
 }
