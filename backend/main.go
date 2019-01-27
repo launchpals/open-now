@@ -21,5 +21,8 @@ func main() {
 		println(err.Error())
 		os.Exit(1)
 	}
-	s.Run(context.Background(), "127.0.0.1", "8081")
+	if err := s.Run(context.Background(), "127.0.0.1", "8081"); err != nil {
+		l.Fatalf("server stopped",
+			"error", err)
+	}
 }
