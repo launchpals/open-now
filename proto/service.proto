@@ -28,6 +28,7 @@ message Context {
     VEHICLE = 1;
     FOOT    = 2;
   }
+  Situation situation = 1;
 }
 
 message PointsOfInterest {

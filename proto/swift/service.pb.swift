@@ -93,6 +93,8 @@ struct OpenNow_Context {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  var situation: OpenNow_Context.Situation = .unknown
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum Situation: SwiftProtobuf.Enum {
@@ -443,18 +445,28 @@ extension OpenNow_Position: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
 
 extension OpenNow_Context: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".Context"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "situation"),
+  ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularEnumField(value: &self.situation)
+      default: break
+      }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.situation != .unknown {
+      try visitor.visitSingularEnumField(value: self.situation, fieldNumber: 1)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: OpenNow_Context, rhs: OpenNow_Context) -> Bool {
+    if lhs.situation != rhs.situation {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
