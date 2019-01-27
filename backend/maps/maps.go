@@ -129,6 +129,3 @@ func newLocationDescription(l *gmaps.PlacesSearchResult) string {
 	}
 	return fmt.Sprintf("%s (near %s)", l.FormattedAddress, l.Vicinity)
 }
-
-// Close stops background jobs
-func (c *Client) Close() { c.cache.stop <- true }
