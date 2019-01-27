@@ -102,11 +102,6 @@ func (s *Server) GetPointsOfInterest(ctx context.Context, pos *open_now.Position
 	}, nil
 }
 
-// GetDirections blah blah
-func (s *Server) GetDirections(context.Context, *open_now.DirectionsReq) (*open_now.DirectionsResp, error) {
-	return nil, nil
-}
-
 // GetTransitStops blah blah
 func (s *Server) GetTransitStops(ctx context.Context, pos *open_now.Position) (*open_now.TransitStops, error) {
 	stops, err := s.t.TransitStops(ctx, pos.Coordinates)
