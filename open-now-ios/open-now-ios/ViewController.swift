@@ -186,8 +186,10 @@ extension ViewControllerLocationManager: CLLocationManagerDelegate, MKMapViewDel
         }
         if annotationView?.annotation?.subtitle == "bus routes" {
             (annotationView as? MKMarkerAnnotationView)?.markerTintColor = #colorLiteral(red: 0, green: 0.4, blue: 1, alpha: 1)
+            annotationView?.displayPriority = .defaultLow
         } else {
-            (annotationView as? MKMarkerAnnotationView)?.markerTintColor = nil
+            (annotationView as? MKMarkerAnnotationView)?.markerTintColor = #colorLiteral(red: 0, green: 0.6705882353, blue: 0.4, alpha: 1)
+            annotationView?.displayPriority = .defaultHigh
         }
         
         return annotationView
