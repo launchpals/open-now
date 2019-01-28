@@ -99,7 +99,7 @@ class DrawerViewController: UIViewController, PulleyDrawerViewControllerDelegate
         view.addSubview(stackView)
         stackView.spacing = 20
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        let busInfo = ["25", "41", "49", "70"]
+        let busInfo = ["25", "33", "41", "49"]
         for bus in busInfo {
             let button = UIButton()
             button.setTitle(bus, for: .normal)
@@ -132,7 +132,7 @@ class DrawerViewController: UIViewController, PulleyDrawerViewControllerDelegate
     func setupDestination() {
         let titleLabel = UILabel()
         titleLabel.textColor = .white
-        titleLabel.text = "Choose a destination"
+        titleLabel.text = "Choose your nearest bus stop"
         titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
         titleLabel.sizeToFit()
         view.backgroundColor = #colorLiteral(red: 0.0431372549, green: 0.0431372549, blue: 0.0431372549, alpha: 1)
@@ -159,7 +159,11 @@ class DrawerViewController: UIViewController, PulleyDrawerViewControllerDelegate
     }
     
     @objc func selectedStop(sender: Notification) {
-        
+//        let count = sender.object as! Int
+        let label = currentViews[0] as! UILabel
+        DispatchQueue.main.async {
+            label.text = "Found safe havens near your stop!"
+        }
     }
     
 
